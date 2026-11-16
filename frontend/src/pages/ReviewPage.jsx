@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import PageViewer from '../components/PageViewer';
 import EvaluationCard from '../components/EvaluationCard';
 import ScoreSummary from '../components/ScoreSummary';
 import { useEvaluation } from '../hooks/useEvaluation';
-import { ArrowLeft, BookOpen, Layers, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 
 export default function ReviewPage() {
   const { examId, submissionId } = useParams();
@@ -30,17 +30,83 @@ export default function ReviewPage() {
   // Mobile tab state
   const [mobileTab, setMobileTab] = useState('sheet'); // 'sheet' | 'evaluation'
 
-  // When teacher clicks a question card or page badge, jump left viewer to that page!
+  // Refs for IntersectionObserver-based auto-scroll sync
+  const cardRefs = useRef({});
+  const scrollContainerRef = useRef(null);
+  const observerRef = useRef(null);
+  // Guard to avoid observer updates when user manually clicks a page badge
+  const isManualJump = useRef(false);
+
+  // When teacher clicks a question card or page badge, jump left viewer to that page
   const handleJumpToPage = (pageNum) => {
     if (pageNum && pageNum > 0) {
+      isManualJump.current = true;
       setCurrentPage(pageNum);
       setHighlightedPage(pageNum);
       // If on mobile, switch to sheet tab
       if (window.innerWidth < 768) {
         setMobileTab('sheet');
       }
+      // Allow observer to resume after a short delay
+      setTimeout(() => {
+        isManualJump.current = false;
+      }, 800);
     }
   };
+
+  // Set up IntersectionObserver on the right-side scrollable list
+  const setupObserver = useCallback(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    const options = {
+      root: scrollContainerRef.current,
+      // Fire when card crosses the top 20% threshold of the scroll container
+      rootMargin: '-10% 0px -60% 0px',
+      threshold: 0,
+    };
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (isManualJump.current) return;
+
+      // Find the entry that just became visible
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+      if (visible.length > 0) {
+        const topEntry = visible[0];
+        const evalId = topEntry.target.dataset.evalId;
+        const ev = evaluations.find((e) => String(e.id) === evalId);
+        if (ev && ev.page_numbers && ev.page_numbers.length > 0) {
+          const targetPage = ev.page_numbers[0];
+          setCurrentPage(targetPage);
+        }
+      }
+    }, options);
+
+    // Observe each card
+    Object.entries(cardRefs.current).forEach(([, el]) => {
+      if (el) observerRef.current.observe(el);
+    });
+  }, [evaluations]);
+
+  // Re-setup observer whenever evaluations load/change
+  useEffect(() => {
+    if (evaluations.length > 0) {
+      // Small delay to let cards render first
+      const t = setTimeout(setupObserver, 100);
+      return () => clearTimeout(t);
+    }
+  }, [evaluations, setupObserver]);
+
+  // Cleanup observer on unmount
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, []);
 
   const handleReEvaluate = async (evalId) => {
     setReEvaluatingId(evalId);
@@ -96,7 +162,7 @@ export default function ReviewPage() {
 
       {/* Main Split-Screen Container */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-6.5rem)]">
-        {/* LEFT 50%: Student Answer Sheet Page Viewer */}
+        {/* LEFT 50%: Student Answer Sheet Page Viewer — synchronized via observer */}
         <div
           className={`w-full md:w-1/2 h-full flex flex-col ${
             mobileTab === 'sheet' ? 'flex' : 'hidden md:flex'
@@ -105,7 +171,11 @@ export default function ReviewPage() {
           <PageViewer
             images={pageImageUrls}
             currentPage={currentPage}
-            onPageChange={setCurrentPage}
+            onPageChange={(p) => {
+              isManualJump.current = true;
+              setCurrentPage(p);
+              setTimeout(() => { isManualJump.current = false; }, 800);
+            }}
             highlightedPage={highlightedPage}
           />
         </div>
@@ -125,8 +195,11 @@ export default function ReviewPage() {
             isSaving={isSaving}
           />
 
-          {/* Scrollable Question Cards List */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* Scrollable Question Cards List — observer root */}
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 overflow-y-auto p-4 space-y-4"
+          >
             {evaluations.length === 0 ? (
               <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400">
                 <BookOpen className="w-10 h-10 mx-auto mb-2 opacity-50" />
@@ -134,15 +207,20 @@ export default function ReviewPage() {
               </div>
             ) : (
               evaluations.map((ev) => (
-                <EvaluationCard
+                <div
                   key={ev.id}
-                  evaluation={ev}
-                  onOverride={overrideMarks}
-                  onReset={resetToAiMarks}
-                  onReEvaluate={handleReEvaluate}
-                  onJumpToPage={handleJumpToPage}
-                  isReEvaluating={reEvaluatingId === ev.id}
-                />
+                  ref={(el) => { cardRefs.current[ev.id] = el; }}
+                  data-eval-id={String(ev.id)}
+                >
+                  <EvaluationCard
+                    evaluation={ev}
+                    onOverride={overrideMarks}
+                    onReset={resetToAiMarks}
+                    onReEvaluate={handleReEvaluate}
+                    onJumpToPage={handleJumpToPage}
+                    isReEvaluating={reEvaluatingId === ev.id}
+                  />
+                </div>
               ))
             )}
           </div>

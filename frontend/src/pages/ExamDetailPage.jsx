@@ -16,15 +16,98 @@ import {
   Download,
   ArrowLeft,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   Layers,
+  Lock,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+// ─── Collapsible Step Card ─────────────────────────────────────────────────
+function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpen = true }) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div
+      className={`bg-white rounded-2xl border shadow-xs mb-5 overflow-hidden transition-all ${
+        locked ? 'border-slate-200 opacity-80' : 'border-slate-200'
+      }`}
+    >
+      {/* Card Header */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors"
+      >
+        <div className="flex items-center space-x-3">
+          {/* Step number circle */}
+          <span
+            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+              badge === 'done'
+                ? 'bg-emerald-100 text-emerald-700'
+                : badge === 'saved'
+                ? 'bg-indigo-100 text-indigo-700'
+                : 'bg-slate-100 text-slate-500'
+            }`}
+          >
+            {badge === 'done' || badge === 'saved' ? (
+              <CheckCircle2 className="w-4 h-4" />
+            ) : locked ? (
+              <Lock className="w-3.5 h-3.5" />
+            ) : (
+              step
+            )}
+          </span>
+          <Icon
+            className={`w-4 h-4 ${
+              badge === 'done' ? 'text-emerald-600' : locked ? 'text-slate-400' : 'text-indigo-600'
+            }`}
+          />
+          <span
+            className={`text-sm font-semibold ${
+              locked ? 'text-slate-400' : 'text-slate-900'
+            }`}
+          >
+            {title}
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          {badge === 'done' && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
+              ✓ Confirmed
+            </span>
+          )}
+          {badge === 'saved' && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">
+              ✓ Saved
+            </span>
+          )}
+          {locked && (
+            <span className="text-xs text-slate-400">Complete previous step first</span>
+          )}
+          {open ? (
+            <ChevronUp className="w-4 h-4 text-slate-400" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-slate-400" />
+          )}
+        </div>
+      </button>
+
+      {/* Collapsible Body */}
+      {open && (
+        <div className="px-6 pb-6 border-t border-slate-100">
+          <div className="pt-5">{children}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Page ─────────────────────────────────────────────────────────────
 export default function ExamDetailPage() {
   const { examId } = useParams();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('questions'); // 'questions' | 'key' | 'students'
   const [exam, setExam] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answerKeys, setAnswerKeys] = useState([]);
@@ -60,11 +143,11 @@ export default function ExamDetailPage() {
     loadData();
   }, [loadData]);
 
-  // Handle Question Paper Upload
+  // ── Handlers (unchanged logic) ───────────────────────────────────────────
+
   const handleUploadQP = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     try {
       toast.loading('Uploading question paper...', { id: 'qp-upload' });
       const res = await examService.uploadQuestionPaper(examId, file);
@@ -75,11 +158,9 @@ export default function ExamDetailPage() {
     }
   };
 
-  // Handle Answer Key Upload
   const handleUploadAK = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     try {
       toast.loading('Uploading answer key...', { id: 'ak-upload' });
       const res = await examService.uploadAnswerKey(examId, file);
@@ -90,7 +171,6 @@ export default function ExamDetailPage() {
     }
   };
 
-  // Handle Generate AI Answer Key
   const handleGenerateAK = async () => {
     try {
       toast.loading('Starting AI model answer generation...', { id: 'ak-gen' });
@@ -102,30 +182,24 @@ export default function ExamDetailPage() {
     }
   };
 
-  // Handle Single Student Answer Sheet Upload
   const handleUploadStudentSheet = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     try {
       toast.loading('Uploading student answer sheet...', { id: 'sub-upload' });
       const res = await studentService.uploadSubmission(examId, file);
       toast.success('Uploaded! AI grading started...', { id: 'sub-upload' });
       setSubJobId(res.job_id);
-      if (res.submission_id) {
-        setLastUploadedSubId(res.submission_id);
-      }
+      if (res.submission_id) setLastUploadedSubId(res.submission_id);
       loadData();
     } catch (err) {
       toast.error('Failed to upload student answer sheet', { id: 'sub-upload' });
     }
   };
 
-  // Handle Bulk Upload
   const handleBulkUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-
     try {
       toast.loading(`Uploading ${files.length} answer sheets...`, { id: 'bulk-upload' });
       const res = await studentService.bulkUploadSubmissions(examId, files);
@@ -136,7 +210,6 @@ export default function ExamDetailPage() {
     }
   };
 
-  // Questions mutations
   const handleUpdateQuestion = async (qId, updatedData) => {
     try {
       await examService.updateQuestion(examId, qId, updatedData);
@@ -177,13 +250,11 @@ export default function ExamDetailPage() {
       await examService.confirmQuestions(examId);
       toast.success('Questions confirmed! Next: Setup Answer Key');
       loadData();
-      setActiveTab('key');
     } catch (err) {
       toast.error('Failed to confirm questions');
     }
   };
 
-  // Answer Key mutations
   const handleUpdateAnswerKey = async (akId, updatedData) => {
     try {
       await examService.updateAnswerKey(examId, akId, updatedData);
@@ -198,7 +269,6 @@ export default function ExamDetailPage() {
       await examService.confirmAnswerKey(examId);
       toast.success('Answer key confirmed! Ready to evaluate student sheets.');
       loadData();
-      setActiveTab('students');
     } catch (err) {
       toast.error('Failed to confirm answer key');
     }
@@ -226,282 +296,262 @@ export default function ExamDetailPage() {
     );
   }
 
+  // Derive step completion states
+  const questionsConfirmed = questions.length > 0;
+  const keyConfirmed = answerKeys.length > 0;
+
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
         {/* Navigation Breadcrumb */}
         <Link
           to="/dashboard"
-          className="inline-flex items-center text-xs text-slate-500 hover:text-slate-800 mb-4 transition-colors"
+          className="inline-flex items-center text-xs text-slate-500 hover:text-slate-800 mb-5 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           Back to Dashboard
         </Link>
 
         {/* Exam Title & Stats Banner */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-6 shadow-md mb-7 text-white">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xs font-semibold px-2.5 py-0.5 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-100">
+              <div className="flex items-center space-x-2 mb-1">
+                <span className="text-xs font-semibold px-2.5 py-0.5 bg-white/20 rounded-md border border-white/30">
                   {exam?.subject || 'Subject'}
                 </span>
-                <span className="text-xs text-slate-400">Class: {exam?.class_name || 'N/A'}</span>
+                <span className="text-xs text-indigo-200">Class: {exam?.class_name || 'N/A'}</span>
               </div>
-              <h1 className="text-xl font-bold text-slate-900 mt-1">{exam?.title}</h1>
+              <h1 className="text-2xl font-bold">{exam?.title}</h1>
+              <div className="flex items-center space-x-4 mt-2 text-xs text-indigo-200">
+                <span>📋 {questions.length} Questions</span>
+                <span>🔑 {answerKeys.length} Answer Keys</span>
+                <span>👨‍🎓 {submissions.length} Students</span>
+              </div>
             </div>
 
-            {/* Actions: Export Exam CSV */}
-            <div className="flex items-center space-x-3">
-              <a
-                href={studentService.getExamCsvUrl(examId)}
-                download
-                className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
-                title="Download class summary CSV"
-              >
-                <Download className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
-                Export Class CSV
-              </a>
-            </div>
+            <a
+              href={studentService.getExamCsvUrl(examId)}
+              download
+              className="inline-flex items-center px-3 py-1.5 bg-white/15 hover:bg-white/25 border border-white/30 text-xs font-medium rounded-lg text-white transition-colors"
+              title="Download class summary CSV"
+            >
+              <Download className="w-3.5 h-3.5 mr-1.5" />
+              Export Class CSV
+            </a>
           </div>
         </div>
 
-        {/* Workflow Stepper Tabs */}
-        <div className="flex border-b border-slate-200 mb-6 bg-white rounded-xl px-2 py-1.5 shadow-2xs">
-          <button
-            onClick={() => setActiveTab('questions')}
-            className={`flex-1 flex items-center justify-center py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'questions'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            <FileText className="w-4 h-4 mr-1.5" />
-            1. Question Paper ({questions.length})
-          </button>
+        {/* ── STEP 1: Question Paper ─────────────────────────────────────── */}
+        <StepCard
+          step="1"
+          title={`Question Paper ${questions.length > 0 ? `(${questions.length} questions)` : ''}`}
+          icon={FileText}
+          badge={questionsConfirmed ? 'done' : null}
+          defaultOpen={true}
+        >
+          {/* Upload area — always visible so teacher can re-upload */}
+          <div className="bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-400 p-6 text-center transition-colors mb-4">
+            <FileText className="w-8 h-8 text-indigo-500 mx-auto mb-2" />
+            <p className="text-xs font-semibold text-slate-700 mb-0.5">
+              {questionsConfirmed ? 'Re-upload Question Paper' : 'Upload Question Paper'}
+            </p>
+            <p className="text-xs text-slate-400 max-w-sm mx-auto mb-4">
+              PDF or image — Gemini Vision will extract all questions and marks automatically.
+            </p>
+            <label className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors">
+              <Upload className="w-3.5 h-3.5 mr-1.5" />
+              Select Question Paper (PDF / Image)
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                onChange={handleUploadQP}
+                className="hidden"
+              />
+            </label>
+          </div>
 
-          <button
-            onClick={() => setActiveTab('key')}
-            className={`flex-1 flex items-center justify-center py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'key'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            <KeyRound className="w-4 h-4 mr-1.5" />
-            2. Answer Key ({answerKeys.length})
-          </button>
+          {qpJobId && (
+            <JobProgress
+              jobId={qpJobId}
+              title="Extracting Questions with Gemini Vision"
+              onComplete={() => {
+                toast.success('Question extraction complete!');
+                loadData();
+              }}
+            />
+          )}
 
-          <button
-            onClick={() => setActiveTab('students')}
-            className={`flex-1 flex items-center justify-center py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'students'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            <Users className="w-4 h-4 mr-1.5" />
-            3. Student Papers ({submissions.length})
-          </button>
-        </div>
+          <QuestionTable
+            questions={questions}
+            onUpdateQuestion={handleUpdateQuestion}
+            onAddQuestion={handleAddQuestion}
+            onDeleteQuestion={handleDeleteQuestion}
+            onConfirmAll={handleConfirmQuestions}
+          />
+        </StepCard>
 
-        {/* TAB 1: QUESTION PAPER */}
-        {activeTab === 'questions' && (
-          <div className="space-y-6">
-            {/* Upload Area */}
-            <div className="bg-white rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-400 p-8 text-center transition-colors">
-              <Upload className="w-10 h-10 text-indigo-500 mx-auto mb-2" />
-              <h3 className="text-sm font-bold text-slate-800">Upload Question Paper</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                Upload a PDF or image of the exam. Gemini Vision will read and extract all questions
-                and marks automatically.
-              </p>
-              <label className="inline-flex items-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors">
-                <FileText className="w-4 h-4 mr-1.5" />
-                Select Question Paper (PDF / Image)
+        {/* ── STEP 2: Answer Key ─────────────────────────────────────────── */}
+        <StepCard
+          step="2"
+          title={`Answer Key ${answerKeys.length > 0 ? `(${answerKeys.length} entries)` : ''}`}
+          icon={KeyRound}
+          badge={keyConfirmed ? 'saved' : null}
+          locked={false}
+          defaultOpen={questionsConfirmed}
+        >
+          {!questionsConfirmed && (
+            <div className="flex items-center space-x-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-4">
+              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-amber-500" />
+              <span>Tip: Confirm your questions first so the AI can map answers correctly. You can still upload a key below.</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* Option A: Upload Key */}
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center space-x-2 text-slate-800 font-semibold text-sm mb-1">
+                  <Upload className="w-4 h-4 text-indigo-500" />
+                  <span>Upload Official Answer Key</span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Have an official key or solution doc? Upload it — Gemini will extract and map answers.
+                </p>
+              </div>
+              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs cursor-pointer transition-colors">
+                <KeyRound className="w-3.5 h-3.5 mr-1.5 text-indigo-600" />
+                Upload Key (PDF / Image)
                 <input
                   type="file"
                   accept=".pdf,image/*"
-                  onChange={handleUploadQP}
+                  onChange={handleUploadAK}
                   className="hidden"
                 />
               </label>
             </div>
 
-            {/* Background Job Progress for Question Paper */}
-            {qpJobId && (
-              <JobProgress
-                jobId={qpJobId}
-                title="Extracting Questions with Gemini Vision"
-                onComplete={() => {
-                  toast.success('Question extraction complete!');
-                  loadData();
-                }}
-              />
-            )}
-
-            {/* Editable Question Table */}
-            <QuestionTable
-              questions={questions}
-              onUpdateQuestion={handleUpdateQuestion}
-              onAddQuestion={handleAddQuestion}
-              onDeleteQuestion={handleDeleteQuestion}
-              onConfirmAll={handleConfirmQuestions}
-            />
+            {/* Option B: Generate with AI */}
+            <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl border border-indigo-200 p-5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center space-x-2 text-indigo-900 font-semibold text-sm mb-1">
+                  <Sparkles className="w-4 h-4 text-indigo-600" />
+                  <span>Generate Ideal Answers with AI</span>
+                </div>
+                <p className="text-xs text-slate-600">
+                  No answer key? Gemini will solve the question paper and generate model answers with marking rubrics.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleGenerateAK}
+                className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                Generate AI Model Answers
+              </button>
+            </div>
           </div>
-        )}
 
-        {/* TAB 2: ANSWER KEY */}
-        {activeTab === 'key' && (
-          <div className="space-y-6">
-            {/* Options: Upload File or Generate with AI */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Option A: Upload Key */}
-              <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between shadow-xs">
-                <div>
-                  <div className="flex items-center space-x-2 text-indigo-600 font-bold text-sm mb-1">
-                    <Upload className="w-4 h-4" />
-                    <span>Upload Official Answer Key</span>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    If you have an official answer key or solution document, upload it and Gemini
-                    will extract and map answers to questions.
-                  </p>
-                </div>
+          {akJobId && (
+            <JobProgress
+              jobId={akJobId}
+              title="Processing Answer Key with Gemini AI"
+              onComplete={() => {
+                toast.success('Answer key updated!');
+                loadData();
+              }}
+            />
+          )}
 
-                <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs cursor-pointer transition-colors">
-                  <KeyRound className="w-4 h-4 mr-1.5 text-indigo-600" />
-                  Upload Key (PDF / Image)
-                  <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    onChange={handleUploadAK}
-                    className="hidden"
-                  />
-                </label>
+          <AnswerKeyEditor
+            answerKeys={answerKeys}
+            onUpdateKey={handleUpdateAnswerKey}
+            onConfirmAll={handleConfirmAnswerKey}
+          />
+        </StepCard>
+
+        {/* ── STEP 3: Student Answer Sheets ─────────────────────────────── */}
+        <StepCard
+          step="3"
+          title={`Student Answer Sheets ${submissions.length > 0 ? `(${submissions.length} uploaded)` : ''}`}
+          icon={Users}
+          badge={null}
+          locked={false}
+          defaultOpen={keyConfirmed}
+        >
+          {!keyConfirmed && (
+            <div className="flex items-center space-x-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-4">
+              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-amber-500" />
+              <span>Tip: Set up your answer key first so Gemini can grade each question accurately.</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* Single sheet */}
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-5 flex flex-col justify-between">
+              <div>
+                <h3 className="font-semibold text-sm text-slate-900 mb-1">Upload Single Answer Sheet</h3>
+                <p className="text-xs text-slate-500">
+                  Upload one student's handwritten PDF. Gemini Vision reads handwriting, detects name/roll, and grades every question.
+                </p>
               </div>
-
-              {/* Option B: Generate with AI */}
-              <div className="bg-gradient-to-br from-indigo-50/70 to-violet-50/70 rounded-xl border border-indigo-200/80 p-6 flex flex-col justify-between shadow-xs">
-                <div>
-                  <div className="flex items-center space-x-2 text-indigo-900 font-bold text-sm mb-1">
-                    <Sparkles className="w-4 h-4 text-indigo-600" />
-                    <span>Generate Ideal Answers with AI</span>
-                  </div>
-                  <p className="text-xs text-slate-600">
-                    Don't have an answer key? Gemini will automatically solve the question paper and
-                    generate model answers and strict marking rubrics for you to edit.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleGenerateAK}
-                  className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
-                >
-                  <Sparkles className="w-4 h-4 mr-1.5" />
-                  Generate AI Model Answers
-                </button>
-              </div>
+              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors">
+                <Upload className="w-3.5 h-3.5 mr-1.5" />
+                Select Student Sheet (PDF)
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleUploadStudentSheet}
+                  className="hidden"
+                />
+              </label>
             </div>
 
-            {/* Answer Key Job Progress */}
-            {akJobId && (
-              <JobProgress
-                jobId={akJobId}
-                title="Processing Answer Key with Gemini AI"
-                onComplete={() => {
-                  toast.success('Answer key updated!');
-                  loadData();
-                }}
-              />
-            )}
-
-            {/* Answer Key Editor */}
-            <AnswerKeyEditor
-              answerKeys={answerKeys}
-              onUpdateKey={handleUpdateAnswerKey}
-              onConfirmAll={handleConfirmAnswerKey}
-            />
-          </div>
-        )}
-
-        {/* TAB 3: STUDENT PAPERS */}
-        {activeTab === 'students' && (
-          <div className="space-y-6">
-            {/* Upload Area: Single & Bulk */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Single Student Sheet */}
-              <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between shadow-xs">
-                <div>
-                  <h3 className="font-bold text-sm text-slate-900 mb-1">Upload Single Answer Sheet</h3>
-                  <p className="text-xs text-slate-500">
-                    Upload a student's handwritten or printed PDF answer sheet. Gemini Vision will
-                    read handwriting, detect name/roll, and grade each question.
-                  </p>
-                </div>
-
-                <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors">
-                  <Upload className="w-4 h-4 mr-1.5" />
-                  Select Student Sheet (PDF)
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleUploadStudentSheet}
-                    className="hidden"
-                  />
-                </label>
+            {/* Bulk upload */}
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-5 flex flex-col justify-between">
+              <div>
+                <h3 className="font-semibold text-sm text-slate-900 mb-1">Bulk Upload Answer Sheets</h3>
+                <p className="text-xs text-slate-500">
+                  Upload multiple PDFs at once. All sheets are converted and graded in a background queue.
+                </p>
               </div>
-
-              {/* Bulk Upload Sheets */}
-              <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between shadow-xs">
-                <div>
-                  <h3 className="font-bold text-sm text-slate-900 mb-1">Bulk Upload Answer Sheets</h3>
-                  <p className="text-xs text-slate-500">
-                    Upload multiple student answer sheets at once. All papers are converted and
-                    evaluated in a background queue.
-                  </p>
-                </div>
-
-                <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs cursor-pointer transition-colors">
-                  <Layers className="w-4 h-4 mr-1.5 text-indigo-600" />
-                  Select Multiple PDFs
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    multiple
-                    onChange={handleBulkUpload}
-                    className="hidden"
-                  />
-                </label>
-              </div>
+              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs cursor-pointer transition-colors">
+                <Layers className="w-3.5 h-3.5 mr-1.5 text-indigo-600" />
+                Select Multiple PDFs
+                <input
+                  type="file"
+                  accept=".pdf"
+                  multiple
+                  onChange={handleBulkUpload}
+                  className="hidden"
+                />
+              </label>
             </div>
-
-            {/* Submission Job Progress */}
-            {subJobId && (
-              <JobProgress
-                jobId={subJobId}
-                title="AI Grading Student Answer Sheet (Vision + Rubrics)"
-                onComplete={() => {
-                  toast.success('Evaluation complete! Opening review console...');
-                  loadData();
-                  if (lastUploadedSubId) {
-                    setTimeout(() => {
-                      navigate(`/exams/${examId}/students/${lastUploadedSubId}/review`);
-                    }, 500);
-                  }
-                }}
-              />
-            )}
-
-            {/* Student Submissions Table */}
-            <StudentTable
-              submissions={submissions}
-              examId={examId}
-              onDeleteSubmission={handleDeleteSubmission}
-            />
           </div>
-        )}
+
+          {subJobId && (
+            <JobProgress
+              jobId={subJobId}
+              title="AI Grading Student Answer Sheet (Vision + Rubrics)"
+              onComplete={() => {
+                toast.success('Evaluation complete! Opening review console...');
+                loadData();
+                if (lastUploadedSubId) {
+                  setTimeout(() => {
+                    navigate(`/exams/${examId}/students/${lastUploadedSubId}/review`);
+                  }, 500);
+                }
+              }}
+            />
+          )}
+
+          <StudentTable
+            submissions={submissions}
+            examId={examId}
+            onDeleteSubmission={handleDeleteSubmission}
+          />
+        </StepCard>
       </div>
     </Layout>
   );
