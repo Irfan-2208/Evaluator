@@ -3,34 +3,51 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    // 1. Check saved localStorage first
-    const saved = localStorage.getItem('examiner_theme');
-    if (saved === 'dark' || saved === 'light') {
-      return saved;
-    }
-    // Default to 'light'
+  const [theme, setThemeState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('examiner_theme');
+      if (saved === 'dark' || saved === 'light') {
+        return saved;
+      }
+    } catch (e) {}
     return 'light';
   });
 
-  useEffect(() => {
+  const applyTheme = (mode) => {
     const root = document.documentElement;
-    if (theme === 'dark') {
+    const body = document.body;
+    if (mode === 'dark') {
       root.classList.add('dark');
-      document.body.classList.add('dark');
-      document.body.style.backgroundColor = '#020617';
-      document.body.style.color = '#f8fafc';
+      if (body) {
+        body.classList.add('dark');
+        body.style.backgroundColor = '#020617';
+        body.style.color = '#f8fafc';
+      }
     } else {
       root.classList.remove('dark');
-      document.body.classList.remove('dark');
-      document.body.style.backgroundColor = '#f1f5f9';
-      document.body.style.color = '#0f172a';
+      if (body) {
+        body.classList.remove('dark');
+        body.style.backgroundColor = '#f8fafc';
+        body.style.color = '#0f172a';
+      }
     }
-    localStorage.setItem('examiner_theme', theme);
+    try {
+      localStorage.setItem('examiner_theme', mode);
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    applyTheme(theme);
   }, [theme]);
 
+  const setTheme = (mode) => {
+    const nextMode = mode === 'dark' ? 'dark' : 'light';
+    applyTheme(nextMode);
+    setThemeState(nextMode);
+  };
+
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const isDark = theme === 'dark';

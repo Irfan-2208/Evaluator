@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 import {
   GraduationCap,
   LayoutDashboard,
@@ -9,13 +9,10 @@ import {
   LogOut,
   User,
   PlusCircle,
-  Sun,
-  Moon,
 } from 'lucide-react';
 
 export default function Layout({ children, fullHeight = false }) {
   const { teacher, logout } = useAuth();
-  const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -59,25 +56,8 @@ export default function Layout({ children, fullHeight = false }) {
               New Exam
             </Link>
 
-            {/* Dark / Light Mode Toggle Button with Clear Label */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all text-xs font-semibold shadow-2xs"
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              aria-label="Toggle Theme"
-            >
-              {isDark ? (
-                <>
-                  <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs">Light</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs">Dark</span>
-                </>
-              )}
-            </button>
+            {/* Dual Theme Switcher (Light & Dark options both visible) */}
+            <ThemeToggle />
 
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
 

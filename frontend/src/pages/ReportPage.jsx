@@ -64,12 +64,12 @@ export default function ReportPage() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-4 py-8 w-full print:p-0 print:max-w-none">
+      <div className="max-w-4xl mx-auto px-4 py-8 w-full print:p-0 print:max-w-none animate-fadeIn">
         {/* Navigation and Action Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6 print:hidden">
           <Link
             to={`/exams/${examId}/students/${submissionId}/review`}
-            className="inline-flex items-center text-xs text-slate-500 hover:text-slate-800 transition-colors"
+            className="inline-flex items-center text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Back to Review
@@ -78,7 +78,7 @@ export default function ReportPage() {
           <div className="flex items-center space-x-3">
             <button
               onClick={handlePrint}
-              className="inline-flex items-center px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg shadow-2xs transition-colors"
+              className="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg shadow-2xs transition-colors"
             >
               <Printer className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
               Print Report
@@ -87,7 +87,7 @@ export default function ReportPage() {
             <a
               href={csvUrl}
               download
-              className="inline-flex items-center px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg shadow-2xs transition-colors"
+              className="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg shadow-2xs transition-colors"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
               Download CSV
@@ -96,7 +96,7 @@ export default function ReportPage() {
             <a
               href={pdfUrl}
               download
-              className="inline-flex items-center px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
+              className="inline-flex items-center px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all active:scale-95"
             >
               <Download className="w-3.5 h-3.5 mr-1.5" />
               Download PDF Report
@@ -105,51 +105,51 @@ export default function ReportPage() {
         </div>
 
         {/* Printable Official Report Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 print:border-none print:shadow-none print:p-0">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-8 print:border-none print:shadow-none print:p-0 transition-colors">
           {/* Header */}
-          <div className="border-b border-slate-200 pb-6 mb-6">
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-6 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                   Official Academic Assessment Report
                 </span>
-                <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+                <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
                   AI Examiner Performance Report
                 </h1>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Automated Multi-Modal Evaluation with Teacher Verification
                 </p>
               </div>
 
               <div className="text-right">
                 <span className="text-xs text-slate-400">Class Rank</span>
-                <div className="text-2xl font-black text-indigo-700">#{performance.rank}</div>
+                <div className="text-2xl font-black text-indigo-700 dark:text-indigo-400">#{performance.rank}</div>
               </div>
             </div>
           </div>
 
           {/* Student & Exam Info Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50 rounded-xl p-4 border border-slate-100 mb-6 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl p-4 border border-slate-100 dark:border-slate-800 mb-6 text-xs">
             <div>
-              <span className="text-slate-400 block font-medium">Student Name</span>
-              <span className="font-bold text-slate-900 mt-0.5 block">{student.name}</span>
+              <span className="text-slate-400 dark:text-slate-500 block font-medium">Student Name</span>
+              <span className="font-bold text-slate-900 dark:text-white mt-0.5 block">{student.name}</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Roll / ID</span>
-              <span className="font-bold text-slate-900 mt-0.5 block">{student.roll_number}</span>
+              <span className="text-slate-400 dark:text-slate-500 block font-medium">Roll / ID</span>
+              <span className="font-bold text-slate-900 dark:text-white mt-0.5 block">{student.roll_number}</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Class / Section</span>
-              <span className="font-bold text-slate-900 mt-0.5 block">{student.class_name}</span>
+              <span className="text-slate-400 dark:text-slate-500 block font-medium">Class / Section</span>
+              <span className="font-bold text-slate-900 dark:text-white mt-0.5 block">{student.class_name}</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Exam Title</span>
-              <span className="font-bold text-slate-900 mt-0.5 block">{exam.title}</span>
+              <span className="text-slate-400 dark:text-slate-500 block font-medium">Exam Title</span>
+              <span className="font-bold text-slate-900 dark:text-white mt-0.5 block">{exam.title}</span>
             </div>
           </div>
 
           {/* Big Score Summary Banner */}
-          <div className="bg-gradient-to-r from-indigo-900 to-slate-900 text-white rounded-xl p-6 mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div className="bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 text-white rounded-xl p-6 mb-8 flex flex-wrap items-center justify-between gap-4 shadow-md">
             <div>
               <p className="text-xs text-indigo-200 uppercase font-semibold tracking-wider">
                 Total Score Awarded
@@ -176,13 +176,13 @@ export default function ReportPage() {
 
           {/* Question-Wise Evaluation Table */}
           <div className="mb-8">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">
               Question-Wise Detailed Breakdown
             </h3>
-            <div className="overflow-x-auto border border-slate-200 rounded-xl">
+            <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-100/70 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                  <tr className="bg-slate-100/70 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
                     <th className="py-2.5 px-3 w-12">Q#</th>
                     <th className="py-2.5 px-3">Question</th>
                     <th className="py-2.5 px-3 w-16 text-center">Max</th>
@@ -191,25 +191,29 @@ export default function ReportPage() {
                     <th className="py-2.5 px-3">Feedback</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {questions.map((q, idx) => (
                     <tr
                       key={idx}
-                      className={q.is_overridden ? 'bg-amber-50/60 font-medium' : 'hover:bg-slate-50/50'}
+                      className={
+                        q.is_overridden
+                          ? 'bg-amber-50/60 dark:bg-amber-950/30 font-medium'
+                          : 'hover:bg-slate-50/50 dark:hover:bg-slate-800/40'
+                      }
                     >
-                      <td className="py-2.5 px-3 font-bold text-slate-900">{q.question_no}</td>
-                      <td className="py-2.5 px-3 text-slate-700 max-w-xs">{q.question_text}</td>
-                      <td className="py-2.5 px-3 text-center text-slate-500">{q.max_marks}</td>
-                      <td className="py-2.5 px-3 text-center text-slate-500">{q.ai_marks}</td>
-                      <td className="py-2.5 px-3 text-center font-bold text-slate-900">
+                      <td className="py-2.5 px-3 font-bold text-slate-900 dark:text-white">{q.question_no}</td>
+                      <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300 max-w-xs">{q.question_text}</td>
+                      <td className="py-2.5 px-3 text-center text-slate-500 dark:text-slate-400">{q.max_marks}</td>
+                      <td className="py-2.5 px-3 text-center text-slate-500 dark:text-slate-400">{q.ai_marks}</td>
+                      <td className="py-2.5 px-3 text-center font-bold text-slate-900 dark:text-white">
                         {q.final_marks}
                         {q.is_overridden && (
-                          <span className="block text-[10px] text-amber-700 font-normal">
+                          <span className="block text-[10px] text-amber-700 dark:text-amber-400 font-normal">
                             (Adjusted)
                           </span>
                         )}
                       </td>
-                      <td className="py-2.5 px-3 text-slate-600 leading-normal">{q.feedback}</td>
+                      <td className="py-2.5 px-3 text-slate-600 dark:text-slate-300 leading-normal">{q.feedback}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -218,23 +222,23 @@ export default function ReportPage() {
           </div>
 
           {/* Overall Remark */}
-          <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
+          <div className="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-1">
               Teacher & AI Evaluation Remark
             </h4>
-            <p className="text-xs text-slate-700 leading-relaxed">{overall_remark}</p>
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{overall_remark}</p>
           </div>
 
           {/* Strengths & Weak Areas Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {/* Strengths */}
             {strengths && strengths.length > 0 && (
-              <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/70">
-                <div className="flex items-center text-xs font-bold text-emerald-900 mb-2">
-                  <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-600" />
+              <div className="p-4 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/60">
+                <div className="flex items-center text-xs font-bold text-emerald-900 dark:text-emerald-300 mb-2">
+                  <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-600 dark:text-emerald-400" />
                   Key Strengths
                 </div>
-                <ul className="list-disc list-inside space-y-1 text-xs text-emerald-950">
+                <ul className="list-disc list-inside space-y-1 text-xs text-emerald-950 dark:text-emerald-200">
                   {strengths.map((st, i) => (
                     <li key={i}>{st}</li>
                   ))}
@@ -244,12 +248,12 @@ export default function ReportPage() {
 
             {/* Weak Areas */}
             {weak_areas && weak_areas.length > 0 && (
-              <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200/70">
-                <div className="flex items-center text-xs font-bold text-rose-900 mb-2">
-                  <AlertTriangle className="w-4 h-4 mr-1.5 text-rose-600" />
+              <div className="p-4 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/70 dark:border-rose-900/60">
+                <div className="flex items-center text-xs font-bold text-rose-900 dark:text-rose-300 mb-2">
+                  <AlertTriangle className="w-4 h-4 mr-1.5 text-rose-600 dark:text-rose-400" />
                   Areas for Improvement
                 </div>
-                <ul className="list-disc list-inside space-y-1 text-xs text-rose-950">
+                <ul className="list-disc list-inside space-y-1 text-xs text-rose-950 dark:text-rose-200">
                   {weak_areas.map((wa, i) => (
                     <li key={i}>{wa}</li>
                   ))}
@@ -260,12 +264,12 @@ export default function ReportPage() {
 
           {/* Improvement Suggestions */}
           {improvement_suggestions && improvement_suggestions.length > 0 && (
-            <div className="p-4 rounded-xl bg-indigo-50/60 border border-indigo-200/70">
-              <div className="flex items-center text-xs font-bold text-indigo-900 mb-2">
-                <Lightbulb className="w-4 h-4 mr-1.5 text-indigo-600" />
+            <div className="p-4 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/70 dark:border-indigo-900/60">
+              <div className="flex items-center text-xs font-bold text-indigo-900 dark:text-indigo-300 mb-2">
+                <Lightbulb className="w-4 h-4 mr-1.5 text-indigo-600 dark:text-indigo-400" />
                 Actionable Recommendations for the Student
               </div>
-              <ul className="list-disc list-inside space-y-1 text-xs text-indigo-950">
+              <ul className="list-disc list-inside space-y-1 text-xs text-indigo-950 dark:text-indigo-200">
                 {improvement_suggestions.map((sugg, i) => (
                   <li key={i}>{sugg}</li>
                 ))}
@@ -274,7 +278,7 @@ export default function ReportPage() {
           )}
 
           {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
             <span>Generated by AI Examiner Assessment Platform</span>
             <span>Verified and Approved by Teacher</span>
           </div>

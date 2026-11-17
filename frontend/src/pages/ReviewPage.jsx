@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import EvaluationCard from '../components/EvaluationCard';
 import ScoreSummary from '../components/ScoreSummary';
+import ThemeToggle from '../components/ThemeToggle';
 import { useEvaluation } from '../hooks/useEvaluation';
-import { useTheme } from '../context/ThemeContext';
 import {
   ArrowLeft,
   BookOpen,
@@ -12,8 +12,6 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
-  Sun,
-  Moon,
 } from 'lucide-react';
 
 // ─── Left panel: all page images stacked vertically with its OWN scrollbar ───────────
@@ -145,8 +143,6 @@ export default function ReviewPage() {
     updateHeader,
   } = useEvaluation(submissionId);
 
-  const { isDark, toggleTheme } = useTheme();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [reEvaluatingId, setReEvaluatingId] = useState(null);
   const [mobileTab, setMobileTab] = useState('sheet');
@@ -265,24 +261,8 @@ export default function ReviewPage() {
         </Link>
 
         <div className="flex items-center space-x-3">
-          {/* Theme Switcher in Review Topbar */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all text-xs font-medium"
-            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {isDark ? (
-              <>
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-[11px]">Light Mode</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                <span className="text-[11px]">Dark Mode</span>
-              </>
-            )}
-          </button>
+          {/* Dual Theme Switcher (Light & Dark options both visible) */}
+          <ThemeToggle />
 
           {/* Mobile View Switcher */}
           <div className="flex md:hidden bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5">
