@@ -59,17 +59,23 @@ export default function Layout({ children, fullHeight = false }) {
               New Exam
             </Link>
 
-            {/* Dark / Light Mode Toggle */}
+            {/* Dark / Light Mode Toggle Button with Clear Label */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 active:rotate-45"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all text-xs font-semibold shadow-2xs"
               title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               aria-label="Toggle Theme"
             >
               {isDark ? (
-                <Sun className="w-5 h-5 text-amber-400 transition-transform duration-200" />
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="text-xs">Light</span>
+                </>
               ) : (
-                <Moon className="w-5 h-5 text-indigo-600 transition-transform duration-200" />
+                <>
+                  <Moon className="w-4 h-4 text-indigo-600" />
+                  <span className="text-xs">Dark</span>
+                </>
               )}
             </button>
 
