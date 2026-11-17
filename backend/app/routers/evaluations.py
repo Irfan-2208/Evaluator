@@ -89,15 +89,16 @@ def override_marks(
 @router.post("/evaluations/{eval_id}/re-evaluate", response_model=QuestionEvaluationResponse)
 def re_evaluate_question(
     eval_id: int,
+    strictness: str = None,
     current_teacher: Teacher = Depends(get_current_teacher),
     db: Session = Depends(get_db),
 ):
-    """Re-run Gemini Vision grading for this single question."""
+    """Re-run Gemini Vision grading for this single question, optionally with updated strictness."""
     ev = db.query(QuestionEvaluation).filter(QuestionEvaluation.id == eval_id).first()
     if not ev:
         raise HTTPException(status_code=404, detail="Question evaluation not found")
 
-    updated = re_evaluate_single_question(eval_id, db)
+    updated = re_evaluate_single_question(eval_id, db, strictness=strictness)
     return _enrich_evaluation(updated, db)
 
 

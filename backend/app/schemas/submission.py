@@ -23,6 +23,7 @@ class SubmissionResponse(BaseModel):
     total_pages: Optional[int] = 0
     ai_detected_name: Optional[str] = None
     ai_detected_roll: Optional[str] = None
+    grading_strictness: Optional[str] = "moderate"
     submission_status: str = "uploaded"
     job_id: Optional[int] = None
     total_marks: Optional[float] = 0.0

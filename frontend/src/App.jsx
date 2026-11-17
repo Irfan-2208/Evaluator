@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 
 import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
@@ -12,7 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
   return (
-    <>
+    <ThemeProvider>
       <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -71,6 +72,6 @@ export default function App() {
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-    </>
+    </ThemeProvider>
   );
 }

@@ -18,7 +18,6 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
   useEffect(() => {
     if (currentStep && currentStep !== prevStep.current && prevStep.current) {
       setCompletedSteps((prev) => {
-        // Avoid duplicates
         if (prev.includes(prevStep.current)) return prev;
         return [...prev, prevStep.current];
       });
@@ -33,7 +32,7 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
   const isActive = !isDone && !isFailed;
 
   return (
-    <div className="relative bg-white rounded-xl border border-slate-200 shadow-sm my-4 overflow-hidden">
+    <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm my-4 overflow-hidden transition-colors">
       {/* Scanning animation bar at the top — only while active */}
       {isActive && (
         <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden">
@@ -56,17 +55,17 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
             ) : isFailed ? (
               <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0" />
             ) : (
-              <Loader2 className="w-5 h-5 text-indigo-500 animate-spin flex-shrink-0" />
+              <Loader2 className="w-5 h-5 text-indigo-500 dark:text-indigo-400 animate-spin flex-shrink-0" />
             )}
-            <span className="text-sm font-semibold text-slate-900">{title}</span>
+            <span className="text-sm font-semibold text-slate-900 dark:text-white">{title}</span>
           </div>
           <span
             className={`text-xs font-bold px-2.5 py-1 rounded-md ${
               isDone
-                ? 'bg-emerald-50 text-emerald-700'
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
                 : isFailed
-                ? 'bg-rose-50 text-rose-700'
-                : 'bg-indigo-50 text-indigo-700'
+                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300'
+                : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
             }`}
           >
             {isDone ? '✓ Done' : isFailed ? 'Failed' : `${progress}%`}
@@ -79,7 +78,7 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
           {completedSteps.map((step, i) => (
             <div
               key={i}
-              className="flex items-center space-x-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-1.5 animate-fadeIn"
+              className="flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/60 rounded-xl px-3 py-1.5 animate-fadeIn"
             >
               <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 text-emerald-500" />
               <span className="font-medium">{step}</span>
@@ -88,15 +87,15 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
 
           {/* Current active step */}
           {isActive && currentStep && (
-            <div className="flex items-center space-x-2 text-xs text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-1.5 animate-pulse">
-              <Loader2 className="w-3.5 h-3.5 flex-shrink-0 text-indigo-500 animate-spin" />
+            <div className="flex items-center space-x-2 text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/80 rounded-xl px-3 py-1.5 animate-pulse">
+              <Loader2 className="w-3.5 h-3.5 flex-shrink-0 text-indigo-500 dark:text-indigo-400 animate-spin" />
               <span className="font-semibold">{currentStep}</span>
             </div>
           )}
 
           {/* Idle/waiting placeholder */}
           {isActive && !currentStep && (
-            <div className="flex items-center space-x-2 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-lg px-3 py-1.5">
+            <div className="flex items-center space-x-2 text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl px-3 py-1.5">
               <Clock className="w-3.5 h-3.5 flex-shrink-0" />
               <span>Initializing...</span>
             </div>
@@ -104,7 +103,7 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
 
           {/* Done final state */}
           {isDone && (
-            <div className="flex items-center space-x-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5">
+            <div className="flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 rounded-xl px-3 py-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 text-emerald-500" />
               <span className="font-semibold">Completed successfully</span>
             </div>
@@ -112,7 +111,7 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
           <div
             className={`h-2 rounded-full transition-all duration-500 ${
               isFailed
@@ -127,7 +126,7 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
 
         {/* Error detail */}
         {isFailed && (
-          <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-700">
+          <div className="mt-3 p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 rounded-xl text-xs text-rose-700 dark:text-rose-300">
             {errorMessage || 'Failed to complete job. Please check server logs and retry.'}
           </div>
         )}

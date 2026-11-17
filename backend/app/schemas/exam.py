@@ -11,6 +11,7 @@ class ExamBase(BaseModel):
     class_name: Optional[str] = None
     description: Optional[str] = None
     total_marks: Optional[float] = None
+    grading_strictness: Optional[str] = "moderate"
     status: Optional[str] = "draft"
 
 
@@ -24,6 +25,7 @@ class ExamUpdate(BaseModel):
     class_name: Optional[str] = None
     description: Optional[str] = None
     total_marks: Optional[float] = None
+    grading_strictness: Optional[str] = None
     status: Optional[str] = None
 
 

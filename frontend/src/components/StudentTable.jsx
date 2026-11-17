@@ -17,20 +17,20 @@ export default function StudentTable({
   });
 
   const statusBadges = {
-    uploaded: { text: 'Uploaded', class: 'bg-slate-100 text-slate-700 border-slate-200' },
-    processing: { text: 'Processing...', class: 'bg-indigo-50 text-indigo-700 border-indigo-200 animate-pulse' },
-    evaluated: { text: 'Evaluated', class: 'bg-blue-50 text-blue-700 border-blue-200' },
-    reviewed: { text: 'Reviewed', class: 'bg-amber-50 text-amber-700 border-amber-200' },
-    finalized: { text: 'Finalized', class: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    uploaded: { text: 'Uploaded', class: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' },
+    processing: { text: 'Processing...', class: 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 animate-pulse' },
+    evaluated: { text: 'Evaluated', class: 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800' },
+    reviewed: { text: 'Reviewed', class: 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800' },
+    finalized: { text: 'Finalized', class: 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' },
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
       {/* Header & Search */}
-      <div className="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
+      <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/50">
         <div>
-          <h3 className="text-sm font-bold text-slate-900">Student Answer Sheets</h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">Student Answer Sheets</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Uploaded answer sheets and their real-time evaluation status.
           </p>
         </div>
@@ -42,7 +42,7 @@ export default function StudentTable({
             placeholder="Search student or roll..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="text-xs pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg w-56 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="text-xs pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg w-56 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </div>
       </div>
@@ -50,7 +50,7 @@ export default function StudentTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-100/70 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+            <tr className="bg-slate-100/70 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
               <th className="py-3 px-4">Student</th>
               <th className="py-3 px-4">Roll No</th>
               <th className="py-3 px-4">Class</th>
@@ -60,41 +60,32 @@ export default function StudentTable({
               <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-8 text-slate-400 italic">
-                  {search ? 'No students match your search.' : 'No answer sheets uploaded yet.'}
+                <td colSpan="7" className="text-center py-10 text-slate-400 dark:text-slate-500 italic">
+                  {submissions.length === 0
+                    ? 'No student answer sheets uploaded yet.'
+                    : 'No students matching search filter.'}
                 </td>
               </tr>
             ) : (
               filtered.map((s) => {
                 const badge = statusBadges[s.submission_status] || statusBadges.uploaded;
                 return (
-                  <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* Student Name */}
-                    <td className="py-3 px-4 font-semibold text-slate-800">
-                      {s.student_name || s.ai_detected_name || (
-                        <span className="text-slate-400 italic">Unidentified</span>
-                      )}
+                  <tr key={s.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">
+                      {s.student_name || s.ai_detected_name || 'Unnamed Student'}
                     </td>
-
-                    {/* Roll No */}
-                    <td className="py-3 px-4 text-slate-600 font-mono">
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300">
                       {s.roll_number || s.ai_detected_roll || '—'}
                     </td>
-
-                    {/* Class */}
-                    <td className="py-3 px-4 text-slate-600">
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300">
                       {s.class_name || '—'}
                     </td>
-
-                    {/* Pages */}
-                    <td className="py-3 px-4 text-slate-600">
-                      {s.total_pages || (s.page_image_paths?.length || 0)} pgs
+                    <td className="py-3 px-4 text-slate-500 dark:text-slate-400">
+                      {s.total_pages > 0 ? `${s.total_pages} pgs` : '—'}
                     </td>
-
-                    {/* Status */}
                     <td className="py-3 px-4">
                       <span
                         className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${badge.class}`}
@@ -102,45 +93,32 @@ export default function StudentTable({
                         {badge.text}
                       </span>
                     </td>
-
-                    {/* Score */}
-                    <td className="py-3 px-4 font-semibold text-slate-900">
-                      {s.submission_status in { evaluated: 1, reviewed: 1, finalized: 1 } ? (
-                        <span>
-                          {s.total_marks} / {s.max_marks}{' '}
-                          <span className="text-slate-400 font-normal">({s.percentage}%)</span>
-                        </span>
+                    <td className="py-3 px-4">
+                      {s.submission_status === 'uploaded' || s.submission_status === 'processing' ? (
+                        <span className="text-slate-400 italic">Pending</span>
                       ) : (
-                        <span className="text-slate-400 font-normal">—</span>
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          {s.total_marks ?? 0} / {s.max_marks ?? 0}{' '}
+                          <span className="text-slate-500 font-normal">({s.percentage ?? 0}%)</span>
+                        </span>
                       )}
                     </td>
-
-                    {/* Actions */}
                     <td className="py-3 px-4 text-right space-x-2">
                       <Link
                         to={`/exams/${examId}/students/${s.id}/review`}
-                        className="inline-flex items-center text-xs px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-md border border-indigo-200 transition-colors"
+                        className="inline-flex items-center text-xs font-semibold px-3 py-1 bg-indigo-50 dark:bg-indigo-950/70 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-lg transition-colors"
                       >
                         Review
                         <ArrowRight className="w-3 h-3 ml-1" />
                       </Link>
 
-                      {s.submission_status === 'finalized' && (
-                        <Link
-                          to={`/exams/${examId}/students/${s.id}/report`}
-                          className="inline-flex items-center text-xs px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium rounded-md border border-emerald-200 transition-colors"
-                        >
-                          Report
-                        </Link>
-                      )}
-
                       <button
                         type="button"
                         onClick={() => onDeleteSubmission(s.id)}
-                        className="p-1 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors"
-                        title="Delete"
+                        className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded transition-colors"
+                        title="Delete submission"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>

@@ -15,6 +15,8 @@ class Exam(Base):
     class_name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     total_marks = Column(Float, nullable=True)
+    # lenient / moderate / strict
+    grading_strictness = Column(String, default="moderate", nullable=True)
     # draft / active / archived
     status = Column(String, default="draft", nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

@@ -30,6 +30,7 @@ def create_submission(
     student_name: Optional[str] = None,
     roll_number: Optional[str] = None,
     class_name: Optional[str] = None,
+    grading_strictness: Optional[str] = "moderate",
 ) -> StudentSubmission:
     """Persist a new StudentSubmission."""
     submission = StudentSubmission(
@@ -38,6 +39,7 @@ def create_submission(
         student_name=student_name,
         roll_number=roll_number,
         class_name=class_name,
+        grading_strictness=grading_strictness or "moderate",
         submission_status="uploaded",
     )
     db.add(submission)

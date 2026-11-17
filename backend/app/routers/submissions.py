@@ -108,6 +108,7 @@ async def upload_submission(
         student_name=student_name,
         roll_number=roll_number,
         class_name=class_name or exam.class_name,
+        grading_strictness=exam.grading_strictness or "moderate",
     )
 
     # Create job & launch background task
@@ -152,6 +153,7 @@ async def bulk_upload_submissions(
             pdf_path=saved_pdf,
             student_name=base_name,
             class_name=exam.class_name,
+            grading_strictness=exam.grading_strictness or "moderate",
         )
 
         job = create_job(db, job_type="submission_evaluation", submission_id=sub.id, exam_id=exam_id)

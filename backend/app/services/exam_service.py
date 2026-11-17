@@ -17,6 +17,7 @@ def create_exam(db: Session, teacher_id: int, payload: ExamCreate) -> Exam:
         class_name=payload.class_name,
         description=payload.description,
         total_marks=payload.total_marks,
+        grading_strictness=payload.grading_strictness or "moderate",
         status=payload.status or "draft",
     )
     db.add(exam)
@@ -47,6 +48,8 @@ def update_exam(db: Session, exam: Exam, payload: ExamUpdate) -> Exam:
         exam.description = payload.description
     if payload.total_marks is not None:
         exam.total_marks = payload.total_marks
+    if payload.grading_strictness is not None:
+        exam.grading_strictness = payload.grading_strictness
     if payload.status is not None:
         exam.status = payload.status
 

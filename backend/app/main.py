@@ -45,6 +45,21 @@ def _seed_default_teacher():
 async def lifespan(app: FastAPI):
     # Create all tables on startup
     Base.metadata.create_all(bind=engine)
+
+    # SQLite migration: ensure grading_strictness exists on exams & student_submissions
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE exams ADD COLUMN grading_strictness VARCHAR DEFAULT 'moderate'"))
+            conn.commit()
+        except Exception:
+            pass
+        try:
+            conn.execute(text("ALTER TABLE student_submissions ADD COLUMN grading_strictness VARCHAR DEFAULT 'moderate'"))
+            conn.commit()
+        except Exception:
+            pass
+
     # Seed default teacher
     _seed_default_teacher()
     yield

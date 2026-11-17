@@ -118,6 +118,13 @@ def evaluate_submission(
         answer_keys = db.query(AnswerKey).filter(AnswerKey.exam_id == exam.id).all()
         ak_map = {ak.question_id: ak for ak in answer_keys}
 
+        # Determine grading strictness
+        strictness = (
+            getattr(submission, "grading_strictness", None)
+            or getattr(exam, "grading_strictness", None)
+            or "moderate"
+        )
+
         total_questions = len(questions)
         evaluations: list[QuestionEvaluation] = []
 
@@ -149,6 +156,7 @@ def evaluate_submission(
                 key_points=key_pts,
                 marking_scheme=scheme,
                 total_pages=len(image_paths),
+                strictness=strictness,
             )
 
             # Call Gemini Vision with all pages of the student sheet
@@ -302,6 +310,7 @@ def evaluate_submission(
 def re_evaluate_single_question(
     evaluation_id: int,
     db: Session,
+    strictness: Optional[str] = None,
 ) -> QuestionEvaluation:
     """Re-run Gemini evaluation for a single question."""
     ev = db.query(QuestionEvaluation).filter(QuestionEvaluation.id == evaluation_id).first()
@@ -314,6 +323,16 @@ def re_evaluate_single_question(
 
     image_paths = submission.page_image_paths or []
 
+    if strictness:
+        submission.grading_strictness = strictness
+        db.commit()
+
+    active_strictness = (
+        strictness
+        or getattr(submission, "grading_strictness", None)
+        or "moderate"
+    )
+
     grading_prompt = build_answer_grading_prompt(
         question_no=q.question_no,
         question_text=q.question_text,
@@ -322,6 +341,7 @@ def re_evaluate_single_question(
         key_points=ak.key_points if ak else [],
         marking_scheme=ak.marking_scheme if ak else "",
         total_pages=len(image_paths),
+        strictness=active_strictness,
     )
 
     raw_eval = call_vision(image_paths, grading_prompt)

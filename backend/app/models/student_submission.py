@@ -18,6 +18,8 @@ class StudentSubmission(Base):
     total_pages = Column(Integer, default=0)
     ai_detected_name = Column(String, nullable=True)
     ai_detected_roll = Column(String, nullable=True)
+    # lenient / moderate / strict
+    grading_strictness = Column(String, default="moderate", nullable=True)
     # uploaded / processing / evaluated / reviewed / finalized
     submission_status = Column(String, default="uploaded")
     job_id = Column(Integer, ForeignKey("background_jobs.id"), nullable=True)
