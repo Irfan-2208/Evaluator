@@ -96,6 +96,17 @@
   animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* ── Shimmer for progress bars ── */
+@keyframes shimmerMove {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200%  0; }
+}
+
+.animate-shimmer {
+  animation: shimmerMove 1.6s linear infinite;
+  background-size: 200% 100%;
+}
+
 /* ── Custom Independent Scrollbars ── */
 .custom-scrollbar {
   scrollbar-width: thin;

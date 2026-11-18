@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import EvaluationCard from '../components/EvaluationCard';
 import ScoreSummary from '../components/ScoreSummary';
 import ThemeToggle from '../components/ThemeToggle';
+import HighlighterCanvas from '../components/HighlighterCanvas';
 import { useEvaluation } from '../hooks/useEvaluation';
 import {
   ArrowLeft,
@@ -12,10 +13,12 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
+  Highlighter,
+  PenLine,
 } from 'lucide-react';
 
 // ─── Left panel: all page images stacked vertically with its OWN scrollbar ───────────
-function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef, onPageSelect }) {
+function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef, onPageSelect, showAnnotator }) {
   const [scale, setScale] = useState(1);
   const thumbRefs = useRef({});
 
@@ -53,6 +56,11 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
           <span className="text-[11px] font-bold px-2 py-0.5 bg-indigo-600 text-white rounded-md">
             Page {currentPage} of {images.length}
           </span>
+          {showAnnotator && (
+            <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-500 text-white rounded-md animate-pulse">
+              ✍ Annotating
+            </span>
+          )}
         </div>
 
         {/* Zoom Controls */}
@@ -60,7 +68,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
           <button
             onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}
             className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
-            title="Zoom Out"
+            title="Zoom Out (shortcut: -)"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
@@ -70,7 +78,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
           <button
             onClick={() => setScale((s) => Math.min(3.0, s + 0.2))}
             className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
-            title="Zoom In"
+            title="Zoom In (shortcut: +)"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
@@ -87,7 +95,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
       {/* ── SEPARATE LEFT SCROLL CONTAINER ── */}
       <div
         ref={containerRef}
-        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar px-5 py-5 space-y-6 bg-slate-200/50 dark:bg-slate-950 transition-colors duration-200"
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar px-5 py-5 space-y-6 bg-slate-200/50 dark:bg-slate-950 transition-colors duration-200 relative"
       >
         {images.map((imgUrl, idx) => {
           const pageNum = idx + 1;
@@ -200,6 +208,7 @@ export default function ReviewPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [reEvaluatingId, setReEvaluatingId] = useState(null);
   const [mobileTab, setMobileTab] = useState('sheet');
+  const [showAnnotator, setShowAnnotator] = useState(false);
 
   // Dedicated refs for internal element positioning & independent scrolling
   const leftScrollContainerRef = useRef(null);
@@ -359,6 +368,20 @@ export default function ReviewPage() {
         </Link>
 
         <div className="flex items-center space-x-3">
+          {/* Annotate Toggle */}
+          <button
+            onClick={() => setShowAnnotator((v) => !v)}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-95 ${
+              showAnnotator
+                ? 'bg-amber-500 text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-950/40 dark:hover:text-amber-300 border border-slate-200 dark:border-slate-700'
+            }`}
+            title="Toggle answer sheet annotator (highlighter, pen, eraser)"
+          >
+            <Highlighter className="w-3.5 h-3.5" />
+            {showAnnotator ? 'Annotating…' : 'Annotate'}
+          </button>
+
           {/* Dual Theme Switcher (Light & Dark options both visible) */}
           <ThemeToggle />
 
@@ -392,7 +415,7 @@ export default function ReviewPage() {
       <div className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
         {/* ── LEFT 50%: Dedicated Scrollable Answer Sheet ── */}
         <div
-          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col overflow-hidden border-r border-slate-200 dark:border-slate-800 ${
+          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col overflow-hidden border-r border-slate-200 dark:border-slate-800 relative ${
             mobileTab === 'sheet' ? 'flex' : 'hidden md:flex'
           }`}
         >
@@ -402,7 +425,16 @@ export default function ReviewPage() {
             activePageRef={pageElemRefs}
             containerRef={leftScrollContainerRef}
             onPageSelect={handleJumpToPage}
+            showAnnotator={showAnnotator}
           />
+          {/* Highlighter Canvas overlay — rendered on top of the scroll area */}
+          {showAnnotator && (
+            <HighlighterCanvas
+              containerRef={leftScrollContainerRef}
+              images={pageImageUrls}
+              currentPage={currentPage}
+            />
+          )}
         </div>
 
         {/* ── RIGHT 50%: Dedicated Scrollable Evaluation Cards ── */}
