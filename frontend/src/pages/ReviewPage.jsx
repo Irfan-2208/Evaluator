@@ -15,8 +15,9 @@ import {
 } from 'lucide-react';
 
 // ─── Left panel: all page images stacked vertically with its OWN scrollbar ───────────
-function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef }) {
+function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef, onPageSelect }) {
   const [scale, setScale] = useState(1);
+  const thumbRefs = useRef({});
 
   const formatUrl = (url) => {
     if (!url) return '';
@@ -24,6 +25,14 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef 
     if (!clean.startsWith('http') && !clean.startsWith('/')) clean = '/' + clean;
     return clean;
   };
+
+  // Keep active thumbnail scrolled into view in the bottom bar
+  useEffect(() => {
+    const activeThumb = thumbRefs.current[currentPage];
+    if (activeThumb && activeThumb.scrollIntoView) {
+      activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+    }
+  }, [currentPage]);
 
   if (!images || images.length === 0) {
     return (
@@ -86,6 +95,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef 
           return (
             <div
               key={pageNum}
+              data-page-number={pageNum}
               ref={(el) => {
                 if (activePageRef && activePageRef.current) {
                   activePageRef.current[pageNum] = el;
@@ -121,8 +131,52 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef 
           );
         })}
         {/* Bottom padding to allow comfortable scroll */}
-        <div className="h-32" />
+        <div className="h-20" />
       </div>
+
+      {/* ── BOTTOM THUMBNAIL QUICK-JUMP STRIP ── */}
+      {images.length > 1 && (
+        <div className="h-[76px] bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center space-x-2.5 overflow-x-auto flex-shrink-0 z-10 custom-scrollbar transition-colors duration-200">
+          {images.map((imgUrl, idx) => {
+            const pageNum = idx + 1;
+            const isSelected = currentPage === pageNum;
+            return (
+              <button
+                key={pageNum}
+                ref={(el) => {
+                  thumbRefs.current[pageNum] = el;
+                }}
+                type="button"
+                onClick={() => onPageSelect?.(pageNum)}
+                className={`relative flex-shrink-0 h-14 w-11 rounded-lg border-2 overflow-hidden transition-all duration-150 cursor-pointer ${
+                  isSelected
+                    ? 'border-indigo-600 ring-2 ring-indigo-500/50 scale-105 shadow-md -translate-y-0.5'
+                    : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 opacity-70 hover:opacity-100'
+                }`}
+                title={`Jump to Page ${pageNum}`}
+              >
+                <img
+                  src={formatUrl(imgUrl)}
+                  alt={`Thumbnail ${pageNum}`}
+                  className="w-full h-full object-cover object-top bg-white"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+                <span
+                  className={`absolute bottom-0 inset-x-0 text-[10px] font-bold py-0.5 text-center transition-colors ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-slate-800/85 text-slate-200'
+                  }`}
+                >
+                  {pageNum}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -153,6 +207,7 @@ export default function ReviewPage() {
   const cardRefs = useRef({});
   const rightScrollRef = useRef(null);
   const observerRef = useRef(null);
+  const leftObserverRef = useRef(null);
   const isScrollingInternal = useRef(false);
 
   // ── Sync Left Strip when Right Side Scrolls (WITHOUT scrolling the whole page) ──
@@ -205,9 +260,52 @@ export default function ReviewPage() {
     }
   }, [evaluations, setupObserver]);
 
+  // ── Sync Current Page when Left Sheet is Scrolled ──
+  useEffect(() => {
+    if (leftObserverRef.current) leftObserverRef.current.disconnect();
+
+    const container = leftScrollContainerRef.current;
+    if (!container) return;
+
+    leftObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        if (isScrollingInternal.current) return;
+
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => {
+            const containerTop = container.getBoundingClientRect().top;
+            return (
+              Math.abs(a.boundingClientRect.top - containerTop) -
+              Math.abs(b.boundingClientRect.top - containerTop)
+            );
+          });
+
+        if (visible.length === 0) return;
+        const pageNum = parseInt(visible[0].target.dataset.pageNumber, 10);
+        if (pageNum && pageNum !== currentPage) {
+          setCurrentPage(pageNum);
+        }
+      },
+      {
+        root: container,
+        threshold: 0.15,
+      }
+    );
+
+    Object.values(pageElemRefs.current).forEach((el) => {
+      if (el) leftObserverRef.current.observe(el);
+    });
+
+    return () => {
+      if (leftObserverRef.current) leftObserverRef.current.disconnect();
+    };
+  }, [submission?.page_image_urls, currentPage]);
+
   useEffect(() => {
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
+      if (leftObserverRef.current) leftObserverRef.current.disconnect();
     };
   }, []);
 
@@ -303,6 +401,7 @@ export default function ReviewPage() {
             currentPage={currentPage}
             activePageRef={pageElemRefs}
             containerRef={leftScrollContainerRef}
+            onPageSelect={handleJumpToPage}
           />
         </div>
 
