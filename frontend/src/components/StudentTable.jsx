@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 export default function StudentTable({
@@ -103,12 +104,12 @@ export default function StudentTable({
                     </td>
                     <td className="py-3 px-4 text-right">
                       {s.submission_status === 'evaluated' || s.submission_status === 'reviewed' || s.submission_status === 'finalized' ? (
-                        <a
-                          href={`/exams/${examId}/submissions/${s.id}/review`}
+                        <Link
+                          to={`/exams/${examId}/students/${s.id}/review`}
                           className="inline-flex items-center text-xs font-bold px-3 py-1 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cbb89f] text-white dark:text-[#323232] rounded-xl shadow-xs transition-all active:scale-95 mr-2"
                         >
                           Review
-                        </a>
+                        </Link>
                       ) : null}
                     </td>
                   </tr>
