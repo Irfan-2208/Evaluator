@@ -65,12 +65,12 @@ export default function ScoreSummary({
   const StrictIcon = strictCfg.icon;
 
   return (
-    <div className="bg-white/95 dark:bg-[#252525]/95 backdrop-blur-md border-b border-[#DDD0C8] dark:border-charcoal-700 px-4 py-3 sticky top-0 z-20 shadow-xs flex-shrink-0 transition-colors duration-200">
+    <div className="bg-[#fcfaf7]/95 dark:bg-[#1e1c1b]/95 backdrop-blur-md border-b-2 border-[#DDD0C8] dark:border-charcoal-700 px-5 py-3.5 sticky top-0 z-20 shadow-sm flex-shrink-0 transition-colors duration-200">
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Student Details with inline edit */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3.5">
           {/* Avatar Icon */}
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/20 shrink-0">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-base shadow-md shadow-indigo-500/25 shrink-0 ring-2 ring-[#DDD0C8] dark:ring-charcoal-600">
             {submission?.student_name ? submission.student_name.charAt(0).toUpperCase() : 'S'}
           </div>
 
@@ -107,8 +107,8 @@ export default function ScoreSummary({
             </div>
           ) : (
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-sm text-[#323232] dark:text-white">
+              <div className="flex items-center space-x-2.5">
+                <span className="font-black text-base text-[#323232] dark:text-white tracking-tight">
                   {submission?.student_name || submission?.ai_detected_name || 'Student Name'}
                 </span>
                 <button
@@ -121,12 +121,12 @@ export default function ScoreSummary({
                   className="text-slate-400 hover:text-[#323232] dark:hover:text-white transition-colors"
                   title="Edit Student Info"
                 >
-                  <Edit2 className="w-3 h-3" />
+                  <Edit2 className="w-3.5 h-3.5" />
                 </button>
 
                 {/* Status Pill */}
                 <span
-                  className={`text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                  className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-2xs ${
                     statusColors[status] || statusColors.uploaded
                   }`}
                 >
@@ -135,18 +135,21 @@ export default function ScoreSummary({
 
                 {/* Strictness Pill */}
                 <span
-                  className={`inline-flex items-center text-[9px] font-bold px-2 py-0.5 rounded-full border ${strictCfg.color}`}
+                  className={`inline-flex items-center text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-2xs ${strictCfg.color}`}
                   title={`Grading Strictness: ${strictCfg.label}`}
                 >
-                  <StrictIcon className="w-2.5 h-2.5 mr-1" />
+                  <StrictIcon className="w-3 h-3 mr-1" />
                   {strictCfg.label}
                 </span>
               </div>
 
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 space-x-2 mt-0.5">
-                <span>Roll: <strong className="text-[#323232] dark:text-slate-300">{submission?.roll_number || submission?.ai_detected_roll || '—'}</strong></span>
-                <span>•</span>
-                <span>Class: <strong className="text-[#323232] dark:text-slate-300">{submission?.class_name || '—'}</strong></span>
+              <div className="flex items-center space-x-2 mt-1">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#DDD0C8]/40 dark:bg-charcoal-800 text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8]/70 dark:border-charcoal-600">
+                  Roll: <strong className="font-extrabold">{submission?.roll_number || submission?.ai_detected_roll || '—'}</strong>
+                </span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#DDD0C8]/40 dark:bg-charcoal-800 text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8]/70 dark:border-charcoal-600">
+                  Class: <strong className="font-extrabold">{submission?.class_name || '—'}</strong>
+                </span>
               </div>
             </div>
           )}
@@ -156,17 +159,17 @@ export default function ScoreSummary({
         <div className="flex items-center space-x-4">
           <div className="text-right">
             <div className="flex items-baseline space-x-1.5 justify-end">
-              <span className="font-black text-xl text-[#323232] dark:text-white tracking-tight">
+              <span className="font-black text-2xl text-[#323232] dark:text-[#DDD0C8] tracking-tight">
                 {totalAwarded}
               </span>
               <span className="text-xs font-bold text-slate-400">/ {maxTotal}</span>
-              <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 ml-1">
-                ({percentage}%)
+              <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80 ml-1.5 shadow-2xs">
+                {percentage}%
               </span>
             </div>
 
             {/* Vibrant progress bar */}
-            <div className="w-32 bg-[#f4efe9] dark:bg-charcoal-800 rounded-full h-2 overflow-hidden ml-auto mt-1 border border-[#DDD0C8]/50 dark:border-charcoal-700">
+            <div className="w-36 bg-[#f4efe9] dark:bg-charcoal-800 rounded-full h-2.5 overflow-hidden ml-auto mt-1 border border-[#DDD0C8]/60 dark:border-charcoal-700">
               <div
                 className="bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500 h-full rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, percentage)}%` }}
@@ -176,7 +179,7 @@ export default function ScoreSummary({
 
           {/* Vibrant Grade Badge */}
           <div
-            className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-base border border-white/20 ${
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-lg border-2 border-white/20 shadow-md ${
               gradeGradients[grade] || gradeGradients.F
             }`}
             title={`Grade: ${grade}`}
@@ -192,7 +195,7 @@ export default function ScoreSummary({
                   `/exams/${submission.exam_id}/students/${submission.id}/report`
                 )
               }
-              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold rounded-xl shadow-md transition-all duration-200 active:scale-95"
+              className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-black rounded-xl shadow-md transition-all duration-200 active:scale-95"
             >
               <Award className="w-4 h-4 mr-1.5" />
               View Report Card
@@ -201,7 +204,7 @@ export default function ScoreSummary({
             <button
               onClick={onFinalize}
               disabled={isSaving}
-              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#323232] to-[#4c4c4c] dark:from-[#DDD0C8] dark:to-[#cbb89f] text-white dark:text-[#323232] text-xs font-bold rounded-xl shadow-md disabled:opacity-50 transition-all duration-200 active:scale-95"
+              className="inline-flex items-center px-4 py-2.5 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cfc0b6] text-white dark:text-[#323232] text-xs font-black rounded-xl shadow-md disabled:opacity-50 transition-all duration-200 active:scale-95"
             >
               <CheckCircle className="w-4 h-4 mr-1.5" />
               {isSaving ? 'Finalizing...' : 'Approve & Finalize'}
