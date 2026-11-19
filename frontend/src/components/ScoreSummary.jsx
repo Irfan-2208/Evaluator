@@ -126,9 +126,8 @@ export default function ScoreSummary({
 
                 {/* Status Pill */}
                 <span
-                  className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-2xs ${
-                    statusColors[status] || statusColors.uploaded
-                  }`}
+                  className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-2xs ${statusColors[status] || statusColors.uploaded
+                    }`}
                 >
                   {status}
                 </span>
@@ -179,9 +178,8 @@ export default function ScoreSummary({
 
           {/* Vibrant Grade Badge */}
           <div
-            className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-lg border-2 border-white/20 shadow-md ${
-              gradeGradients[grade] || gradeGradients.F
-            }`}
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-lg border-2 border-white/20 shadow-md ${gradeGradients[grade] || gradeGradients.F
+              }`}
             title={`Grade: ${grade}`}
           >
             {grade}

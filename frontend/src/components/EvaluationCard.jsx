@@ -30,7 +30,7 @@ function ScoreArcGauge({ score, max }) {
   const circ = 2 * Math.PI * r;
   const dash = circ * pct;
   const color =
-    pct >= 0.85 ? '#10b981' : pct >= 0.5 ? '#6366f1' : pct >= 0.25 ? '#f59e0b' : '#f43f5e';
+    pct >= 0.85 ? '#8B0000' : pct >= 0.5 ? '#6366f1' : pct >= 0.25 ? '#f59e0b' : '#f43f5e';
 
   return (
     <div className="relative flex items-center justify-center shrink-0">
@@ -128,8 +128,8 @@ export default function EvaluationCard({
 
   const scoreTheme = isFullScore
     ? {
-        borderTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600',
-        badge: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200 border-emerald-400 dark:border-emerald-700',
+        borderTop: 'bg-gradient-to-r from-[#7a0c0c] via-[#8B0000] to-[#991b1b]',
+        badge: 'bg-red-50 dark:bg-red-950/80 text-red-950 dark:text-red-200 border-red-300 dark:border-red-800',
         label: 'Full Marks 🎉',
       }
     : isPartialScore
@@ -260,13 +260,13 @@ export default function EvaluationCard({
         {/* Confidence Strip */}
         <div className="mt-3 pt-2.5 border-t border-[#DDD0C8]/60 dark:border-charcoal-700 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse ring-4 ring-emerald-500/20" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#8B0000] animate-pulse ring-4 ring-[#8B0000]/20" />
             <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
               AI Confidence: <strong className="text-[#323232] dark:text-[#DDD0C8] font-black">{Math.round(confidence * 100)}%</strong>
             </span>
             <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
               confidence >= 0.85
-                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
+                ? 'bg-red-50 dark:bg-red-950/80 text-red-950 dark:text-red-200 border-red-300 dark:border-red-800'
                 : confidence >= 0.6
                 ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
                 : 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-700'
@@ -574,8 +574,8 @@ export default function EvaluationCard({
                   onClick={() => handleSetExact(maxMarks)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all ${
                     marks === maxMarks
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
+                      ? 'bg-[#8B0000] text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-950/60'
                   }`}
                   title="Assign Full Marks"
                 >
