@@ -433,6 +433,7 @@ export default function ReviewPage() {
               containerRef={leftScrollContainerRef}
               images={pageImageUrls}
               currentPage={currentPage}
+              submissionId={submissionId}
             />
           )}
         </div>
@@ -478,6 +479,11 @@ export default function ReviewPage() {
                     onReEvaluate={handleReEvaluate}
                     onJumpToPage={handleJumpToPage}
                     isReEvaluating={reEvaluatingId === ev.id}
+                    onToggleAnnotate={(pageNum) => {
+                      handleJumpToPage(pageNum);
+                      setShowAnnotator(true);
+                    }}
+                    isAnnotating={showAnnotator}
                   />
                 </div>
               ))
