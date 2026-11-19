@@ -23,23 +23,23 @@ export default function Layout({ children, fullHeight = false }) {
 
   return (
     <div
-      className={`bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200 ${
+      className={`bg-[#f6f2ee] dark:bg-[#1a1a1a] text-[#323232] dark:text-[#ede4da] flex flex-col font-sans transition-colors duration-200 ${
         fullHeight ? 'h-screen overflow-hidden' : 'min-h-screen'
       }`}
     >
       {/* Top Navbar */}
-      <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-xs flex-shrink-0 transition-colors duration-200">
+      <header className="bg-white/95 dark:bg-[#252525]/95 backdrop-blur-md border-b border-[#DDD0C8] dark:border-charcoal-600 sticky top-0 z-30 shadow-xs flex-shrink-0 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Link to="/dashboard" className="flex items-center space-x-2 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#323232] to-[#4c4c4c] flex items-center justify-center text-[#DDD0C8] shadow-md shadow-black/15 group-hover:scale-105 transition-transform duration-200 border border-[#DDD0C8]/30">
                 <GraduationCap className="w-6 h-6" />
               </div>
               <div>
-                <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">
+                <span className="font-bold text-lg text-[#323232] dark:text-white tracking-tight">
                   AI Examiner
                 </span>
-                <span className="ml-2 text-xs font-semibold px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 rounded-full border border-indigo-200 dark:border-indigo-800">
+                <span className="ml-2 text-xs font-bold px-2 py-0.5 bg-[#DDD0C8]/60 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] rounded-full border border-[#DDD0C8] dark:border-charcoal-600">
                   v1.2
                 </span>
               </div>
@@ -50,7 +50,7 @@ export default function Layout({ children, fullHeight = false }) {
             {/* New Exam Button */}
             <Link
               to="/exams/new"
-              className="inline-flex items-center px-3.5 py-1.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none transition-all duration-200 active:scale-95"
+              className="inline-flex items-center px-3.5 py-1.5 border border-transparent text-sm font-semibold rounded-xl shadow-sm text-white dark:text-[#323232] bg-[#323232] hover:bg-[#1f1f1f] dark:bg-[#DDD0C8] dark:hover:bg-[#cfc0b6] focus:outline-none transition-all duration-200 active:scale-95 shadow-xs"
             >
               <PlusCircle className="w-4 h-4 mr-1.5" />
               New Exam
@@ -59,11 +59,11 @@ export default function Layout({ children, fullHeight = false }) {
             {/* Dual Theme Switcher (Light & Dark options both visible) */}
             <ThemeToggle />
 
-            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
+            <div className="h-6 w-px bg-[#DDD0C8] dark:bg-charcoal-600" />
 
             {/* Teacher Profile */}
-            <div className="flex items-center space-x-2 text-sm text-slate-700 dark:text-slate-300">
-              <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs">
+            <div className="flex items-center space-x-2 text-sm text-[#323232] dark:text-[#ede4da]">
+              <div className="w-8 h-8 rounded-full bg-[#DDD0C8]/60 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8] dark:border-charcoal-600 flex items-center justify-center font-bold text-xs">
                 {teacher?.full_name ? teacher.full_name[0].toUpperCase() : <User className="w-4 h-4" />}
               </div>
               <span className="font-medium hidden sm:inline text-xs sm:text-sm">

@@ -32,16 +32,14 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
 
   return (
     <div
-      className={`bg-white dark:bg-slate-900 rounded-2xl border shadow-xs mb-5 overflow-hidden transition-all duration-300 ${
-        locked
-          ? 'border-slate-200 dark:border-slate-800 opacity-80'
-          : 'border-slate-200 dark:border-slate-800'
+      className={`bg-white dark:bg-[#252525] rounded-2xl border border-[#DDD0C8] dark:border-charcoal-700 shadow-xs mb-5 overflow-hidden transition-all duration-300 ${
+        locked ? 'opacity-80' : ''
       }`}
     >
       {/* Card Header */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+        className="w-full flex items-center justify-between px-6 py-4 hover:bg-[#faf8f6] dark:hover:bg-charcoal-800 transition-colors"
       >
         <div className="flex items-center space-x-3">
           {/* Step number circle */}
@@ -50,8 +48,8 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
               badge === 'done'
                 ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300'
                 : badge === 'saved'
-                ? 'bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                ? 'bg-[#DDD0C8]/80 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8]'
+                : 'bg-[#DDD0C8]/40 dark:bg-charcoal-800 text-slate-600 dark:text-slate-400'
             }`}
           >
             {badge === 'done' || badge === 'saved' ? (
@@ -68,12 +66,12 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
                 ? 'text-emerald-600 dark:text-emerald-400'
                 : locked
                 ? 'text-slate-400'
-                : 'text-indigo-600 dark:text-indigo-400'
+                : 'text-[#323232] dark:text-[#DDD0C8]'
             }`}
           />
           <span
             className={`text-sm font-semibold ${
-              locked ? 'text-slate-400' : 'text-slate-900 dark:text-white'
+              locked ? 'text-slate-400' : 'text-[#323232] dark:text-white'
             }`}
           >
             {title}
@@ -87,7 +85,7 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
             </span>
           )}
           {badge === 'saved' && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#DDD0C8]/60 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8] dark:border-charcoal-600">
               ✓ Saved
             </span>
           )}
@@ -104,7 +102,7 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
 
       {/* Collapsible Body */}
       {open && (
-        <div className="px-6 pb-6 border-t border-slate-100 dark:border-slate-800">
+        <div className="px-6 pb-6 border-t border-[#DDD0C8]/50 dark:border-charcoal-700">
           <div className="pt-5">{children}</div>
         </div>
       )}
@@ -337,17 +335,17 @@ export default function ExamDetailPage() {
         </Link>
 
         {/* Exam Title & Stats Banner */}
-        <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 rounded-2xl p-6 shadow-md mb-6 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#323232] via-[#3d3d3d] to-[#4c4c4c] rounded-3xl p-6 shadow-xl mb-6 text-white relative overflow-hidden border border-[#DDD0C8]/40">
           <div className="flex flex-wrap items-start justify-between gap-4 relative z-10">
             <div>
               <div className="flex items-center space-x-2 mb-1">
-                <span className="text-xs font-semibold px-2.5 py-0.5 bg-white/20 rounded-md border border-white/30 backdrop-blur-xs">
+                <span className="text-xs font-semibold px-2.5 py-0.5 bg-[#DDD0C8]/20 rounded-md border border-[#DDD0C8]/30 text-[#DDD0C8] backdrop-blur-xs">
                   {exam?.subject || 'Subject'}
                 </span>
-                <span className="text-xs text-indigo-200">Class: {exam?.class_name || 'N/A'}</span>
+                <span className="text-xs text-[#DDD0C8]/80">Class: {exam?.class_name || 'N/A'}</span>
               </div>
-              <h1 className="text-2xl font-bold tracking-tight">{exam?.title}</h1>
-              <div className="flex items-center space-x-4 mt-2 text-xs text-indigo-200">
+              <h1 className="text-2xl font-bold tracking-tight text-white">{exam?.title}</h1>
+              <div className="flex items-center space-x-4 mt-2 text-xs text-[#DDD0C8]/90">
                 <span>📋 {questions.length} Questions</span>
                 <span>🔑 {answerKeys.length} Answer Keys</span>
                 <span>👨‍🎓 {submissions.length} Students</span>
@@ -357,7 +355,7 @@ export default function ExamDetailPage() {
             <a
               href={studentService.getExamCsvUrl(examId)}
               download
-              className="inline-flex items-center px-3 py-1.5 bg-white/15 hover:bg-white/25 border border-white/30 text-xs font-medium rounded-lg text-white transition-all active:scale-95"
+              className="inline-flex items-center px-3.5 py-1.5 bg-[#DDD0C8] hover:bg-[#cbb89f] text-[#323232] text-xs font-bold rounded-xl transition-all active:scale-95 shadow-md"
               title="Download class summary CSV"
             >
               <Download className="w-3.5 h-3.5 mr-1.5" />
@@ -367,11 +365,11 @@ export default function ExamDetailPage() {
         </div>
 
         {/* ── Strictness Level Control Card ── */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs mb-6 transition-colors">
+        <div className="bg-white dark:bg-[#252525] rounded-3xl border border-[#DDD0C8] dark:border-charcoal-700 p-5 shadow-xs mb-6 transition-colors">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
-              <Sliders className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">AI Evaluation Strictness</h2>
+              <Sliders className="w-4 h-4 text-[#323232] dark:text-[#DDD0C8]" />
+              <h2 className="text-sm font-bold text-[#323232] dark:text-white">AI Evaluation Strictness</h2>
             </div>
             <span className="text-xs text-slate-500 dark:text-slate-400">
               Configure how strictly Gemini grades answers
@@ -387,12 +385,12 @@ export default function ExamDetailPage() {
               className={`p-3 rounded-xl border text-left transition-all duration-200 ${
                 currentStrictness === 'lenient'
                   ? 'border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/30'
-                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-[#DDD0C8] dark:border-charcoal-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-charcoal-800'
               }`}
             >
               <div className="flex items-center space-x-2 mb-1">
                 <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span className="font-bold text-xs text-slate-900 dark:text-white">Lenient</span>
+                <span className="font-bold text-xs text-[#323232] dark:text-white">Lenient</span>
                 {currentStrictness === 'lenient' && (
                   <span className="text-[10px] bg-emerald-600 text-white font-bold px-1.5 rounded-full ml-auto">
                     Active
@@ -411,15 +409,15 @@ export default function ExamDetailPage() {
               disabled={isUpdatingStrictness}
               className={`p-3 rounded-xl border text-left transition-all duration-200 ${
                 currentStrictness === 'moderate'
-                  ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/40 ring-2 ring-indigo-500/30'
-                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                  ? 'border-[#323232] dark:border-[#DDD0C8] bg-[#DDD0C8]/40 dark:bg-charcoal-700 ring-2 ring-[#DDD0C8]/60'
+                  : 'border-[#DDD0C8] dark:border-charcoal-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-charcoal-800'
               }`}
             >
               <div className="flex items-center space-x-2 mb-1">
-                <Scale className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                <span className="font-bold text-xs text-slate-900 dark:text-white">Moderate (Standard)</span>
+                <Scale className="w-4 h-4 text-[#323232] dark:text-[#DDD0C8]" />
+                <span className="font-bold text-xs text-[#323232] dark:text-white">Moderate (Standard)</span>
                 {currentStrictness === 'moderate' && (
-                  <span className="text-[10px] bg-indigo-600 text-white font-bold px-1.5 rounded-full ml-auto">
+                  <span className="text-[10px] bg-[#323232] text-white dark:bg-[#DDD0C8] dark:text-[#323232] font-bold px-1.5 rounded-full ml-auto">
                     Active
                   </span>
                 )}
@@ -437,12 +435,12 @@ export default function ExamDetailPage() {
               className={`p-3 rounded-xl border text-left transition-all duration-200 ${
                 currentStrictness === 'strict'
                   ? 'border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/30'
-                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-[#DDD0C8] dark:border-charcoal-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-charcoal-800'
               }`}
             >
               <div className="flex items-center space-x-2 mb-1">
                 <ShieldAlert className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-                <span className="font-bold text-xs text-slate-900 dark:text-white">Strict</span>
+                <span className="font-bold text-xs text-[#323232] dark:text-white">Strict</span>
                 {currentStrictness === 'strict' && (
                   <span className="text-[10px] bg-rose-600 text-white font-bold px-1.5 rounded-full ml-auto">
                     Active
@@ -450,7 +448,7 @@ export default function ExamDetailPage() {
                 )}
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
-                High academic rigor. Full marks require complete steps and exact terminology.
+                High academic rigor, deductions for any omission.
               </p>
             </button>
           </div>

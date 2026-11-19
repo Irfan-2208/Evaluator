@@ -37,20 +37,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-slate-100 to-indigo-100 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-950 flex flex-col items-center justify-center p-4 relative transition-colors duration-200">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f1] via-[#ede5dc] to-[#DDD0C8] dark:from-[#181818] dark:via-[#222222] dark:to-[#323232] flex flex-col items-center justify-center p-4 relative transition-colors duration-200">
       {/* Top Right Theme Toggle */}
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-xl dark:shadow-2xl p-8 border border-slate-200 dark:border-slate-800 transition-colors duration-200">
+      <div className="w-full max-w-md bg-white/95 dark:bg-[#252525]/95 rounded-2xl shadow-xl dark:shadow-2xl p-8 border border-[#DDD0C8] dark:border-charcoal-600 transition-colors duration-200">
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-lg shadow-indigo-300 dark:shadow-indigo-900/50">
+          <div className="w-14 h-14 bg-gradient-to-tr from-[#323232] to-[#4c4c4c] rounded-2xl flex items-center justify-center text-[#DDD0C8] mx-auto mb-3 shadow-lg shadow-black/15 border border-[#DDD0C8]/40">
             <GraduationCap className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">AI Examiner</h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <h1 className="text-2xl font-extrabold text-[#323232] dark:text-white tracking-tight">AI Examiner</h1>
+          <p className="text-xs text-slate-500 dark:text-[#cbb89f] mt-1 font-medium">
             Intelligent Automated Grading with Teacher Oversight
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Teacher Email</label>
+            <label className="block text-xs font-semibold text-[#323232] dark:text-slate-300 mb-1">Teacher Email</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -73,13 +73,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="teacher@school.com"
-                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-[#DDD0C8] dark:border-charcoal-600 rounded-xl bg-[#faf8f5] dark:bg-charcoal-800 text-[#323232] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#323232]/20 dark:focus:ring-[#DDD0C8]/20 focus:border-[#323232] dark:focus:border-[#DDD0C8] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+            <label className="block text-xs font-semibold text-[#323232] dark:text-slate-300 mb-1">Password</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-[#DDD0C8] dark:border-charcoal-600 rounded-xl bg-[#faf8f5] dark:bg-charcoal-800 text-[#323232] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#323232]/20 dark:focus:ring-[#DDD0C8]/20 focus:border-[#323232] dark:focus:border-[#DDD0C8] transition-colors"
               />
             </div>
           </div>
@@ -96,17 +96,17 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition-all active:scale-95 disabled:opacity-50 mt-2"
+            className="w-full py-2.5 px-4 bg-[#323232] hover:bg-[#202020] dark:bg-[#DDD0C8] dark:hover:bg-[#cfc0b6] text-white dark:text-[#323232] text-xs font-bold rounded-xl shadow-md flex items-center justify-center space-x-2 transition-all active:scale-95 disabled:opacity-50 mt-2"
           >
             <span>{isLoading ? 'Signing in...' : 'Sign In as Teacher'}</span>
             {!isLoading && <ArrowRight className="w-4 h-4" />}
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
-          <p className="text-[11px] text-slate-400 dark:text-slate-500">
-            Default credentials: <span className="font-mono text-slate-600 dark:text-slate-300">t@school.com</span> /{' '}
-            <span className="font-mono text-slate-600 dark:text-slate-300">pass123</span>
+        <div className="mt-6 pt-4 border-t border-[#DDD0C8]/60 dark:border-charcoal-700 text-center">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+            Default credentials: <span className="font-mono text-[#323232] dark:text-[#DDD0C8] font-bold">t@school.com</span> /{' '}
+            <span className="font-mono text-[#323232] dark:text-[#DDD0C8] font-bold">pass123</span>
           </p>
         </div>
       </div>

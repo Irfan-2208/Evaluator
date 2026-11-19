@@ -52,7 +52,7 @@ export default function ScoreSummary({
     moderate: {
       label: 'Moderate',
       icon: Scale,
-      color: 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
+      color: 'bg-[#DDD0C8]/60 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] border-[#DDD0C8] dark:border-charcoal-600',
     },
     strict: {
       label: 'Strict',
@@ -65,36 +65,36 @@ export default function ScoreSummary({
   const StrictIcon = strictCfg.icon;
 
   return (
-    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3 sticky top-0 z-20 shadow-xs flex-shrink-0 transition-colors duration-200">
+    <div className="bg-white/95 dark:bg-[#252525]/95 backdrop-blur-md border-b border-[#DDD0C8] dark:border-charcoal-700 px-4 py-3 sticky top-0 z-20 shadow-xs flex-shrink-0 transition-colors duration-200">
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Student Details with inline edit */}
         <div className="flex items-center space-x-3">
           {isEditingStudent ? (
-            <div className="flex items-center space-x-2 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center space-x-2 bg-[#faf8f6] dark:bg-charcoal-800 p-1.5 rounded-lg border border-[#DDD0C8] dark:border-charcoal-600">
               <input
                 type="text"
                 placeholder="Student Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="text-xs px-2 py-1 border border-slate-300 dark:border-slate-600 rounded w-28 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none"
+                className="text-xs px-2 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded w-28 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Roll No"
                 value={roll}
                 onChange={(e) => setRoll(e.target.value)}
-                className="text-xs px-2 py-1 border border-slate-300 dark:border-slate-600 rounded w-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none"
+                className="text-xs px-2 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded w-20 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Class"
                 value={className}
                 onChange={(e) => setClassName(e.target.value)}
-                className="text-xs px-2 py-1 border border-slate-300 dark:border-slate-600 rounded w-16 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none"
+                className="text-xs px-2 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded w-16 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
               />
               <button
                 onClick={handleSaveHeader}
-                className="p-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                className="p-1 bg-[#323232] dark:bg-[#DDD0C8] text-white dark:text-[#323232] rounded hover:opacity-90"
                 title="Save"
               >
                 <Check className="w-3.5 h-3.5" />
@@ -104,7 +104,7 @@ export default function ScoreSummary({
             <div className="flex items-center space-x-2.5">
               <div>
                 <div className="flex items-center space-x-1.5">
-                  <span className="font-bold text-sm text-slate-900 dark:text-white">
+                  <span className="font-bold text-sm text-[#323232] dark:text-white">
                     {submission?.student_name || submission?.ai_detected_name || 'Student Name'}
                   </span>
                   <button
@@ -152,19 +152,19 @@ export default function ScoreSummary({
         <div className="flex items-center space-x-4">
           <div className="text-right">
             <div className="flex items-baseline space-x-1.5 justify-end">
-              <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
+              <span className="font-extrabold text-lg text-[#323232] dark:text-white tracking-tight">
                 {totalAwarded}
               </span>
               <span className="text-xs font-semibold text-slate-400">/ {maxTotal}</span>
-              <span className="text-xs font-bold text-slate-600 dark:text-slate-300 ml-1">
+              <span className="text-xs font-bold text-[#323232] dark:text-[#DDD0C8] ml-1">
                 ({percentage}%)
               </span>
             </div>
 
             {/* Micro progress bar */}
-            <div className="w-32 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden ml-auto mt-0.5">
+            <div className="w-32 bg-[#f4efe9] dark:bg-charcoal-800 rounded-full h-1.5 overflow-hidden ml-auto mt-0.5">
               <div
-                className="bg-indigo-600 dark:bg-indigo-500 h-1.5 rounded-full transition-all duration-300"
+                className="bg-[#323232] dark:bg-[#DDD0C8] h-1.5 rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(100, percentage)}%` }}
               />
             </div>
@@ -197,7 +197,7 @@ export default function ScoreSummary({
             <button
               onClick={onFinalize}
               disabled={isSaving}
-              className="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-sm disabled:opacity-50 transition-all duration-200 active:scale-95"
+              className="inline-flex items-center px-3 py-1.5 bg-[#323232] hover:bg-[#1f1f1f] dark:bg-[#DDD0C8] dark:hover:bg-[#cbb89f] text-white dark:text-[#323232] text-xs font-semibold rounded-lg shadow-sm disabled:opacity-50 transition-all duration-200 active:scale-95"
             >
               <CheckCircle className="w-3.5 h-3.5 mr-1" />
               {isSaving ? 'Finalizing...' : 'Approve & Finalize'}

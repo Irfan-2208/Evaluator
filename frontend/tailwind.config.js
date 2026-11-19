@@ -5,6 +5,33 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Brand palette: Beige + Dark Grey
+        beige: {
+          50:  '#faf8f6',
+          100: '#f5f0eb',
+          200: '#ede4da',
+          300: '#DDD0C8',   // primary beige
+          400: '#cbb89f',
+          500: '#b89e82',
+          600: '#9e8265',
+          700: '#7d6449',
+          800: '#5c4733',
+          900: '#3a2d20',
+          950: '#1e1710',
+        },
+        charcoal: {
+          50:  '#f5f5f5',
+          100: '#ebebeb',
+          200: '#d4d4d4',
+          300: '#ababab',
+          400: '#828282',
+          500: '#5e5e5e',
+          600: '#474747',
+          700: '#323232',   // primary dark grey
+          800: '#252525',
+          900: '#1a1a1a',
+          950: '#0d0d0d',
+        },
         dark: {
           50: '#f8fafc',
           100: '#f1f5f9',
@@ -25,6 +52,19 @@ export default {
         'pop-in': 'popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both',
         'pulse-glow': 'pulseGlow 2.5s infinite',
         'scanline': 'scanline 2.2s ease-in-out infinite',
+        'bar-grow': 'barGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'count-up': 'fadeIn 0.6s ease-out both',
+      },
+      keyframes: {
+        barGrow: {
+          '0%':   { transform: 'scaleY(0)', transformOrigin: 'bottom' },
+          '100%': { transform: 'scaleY(1)', transformOrigin: 'bottom' },
+        },
+      },
+      backgroundImage: {
+        'beige-gradient': 'linear-gradient(135deg, #DDD0C8 0%, #f5f0eb 100%)',
+        'charcoal-gradient': 'linear-gradient(135deg, #323232 0%, #474747 100%)',
+        'warm-gradient': 'linear-gradient(135deg, #DDD0C8 0%, #cbb89f 50%, #b89e82 100%)',
       },
     },
   },

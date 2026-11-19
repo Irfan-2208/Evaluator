@@ -20,15 +20,15 @@ export function ThemeProvider({ children }) {
       root.classList.add('dark');
       if (body) {
         body.classList.add('dark');
-        body.style.backgroundColor = '#020617';
-        body.style.color = '#f8fafc';
+        body.style.backgroundColor = '#1a1a1a';
+        body.style.color = '#ede4da';
       }
     } else {
       root.classList.remove('dark');
       if (body) {
         body.classList.remove('dark');
-        body.style.backgroundColor = '#f8fafc';
-        body.style.color = '#0f172a';
+        body.style.backgroundColor = '#f6f2ee';
+        body.style.color = '#323232';
       }
     }
     try {
