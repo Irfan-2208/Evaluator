@@ -133,15 +133,15 @@
 }
 
 .dark .custom-scrollbar {
-  scrollbar-color: rgba(71, 85, 105, 0.6) transparent;
+  scrollbar-color: rgba(176, 153, 142, 0.4) transparent;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.5);
+  background: rgba(176, 153, 142, 0.35);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(129, 140, 248, 0.75);
+  background: rgba(221, 208, 200, 0.6);
 }
 
 /* ── Smooth Theme Transitions ── */

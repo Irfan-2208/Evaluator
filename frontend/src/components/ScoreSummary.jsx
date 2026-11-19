@@ -37,8 +37,8 @@ export default function ScoreSummary({
 
   const statusColors = {
     uploaded: 'bg-slate-100 dark:bg-charcoal-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-charcoal-600',
-    processing: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800',
-    evaluated: 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800',
+    processing: 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700',
+    evaluated: 'bg-[#DDD0C8]/80 dark:bg-[#4A3830] text-[#323232] dark:text-[#DDD0C8] border-[#cbb89f] dark:border-[#6b5248]',
     reviewed: 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800',
     finalized: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
   };
@@ -70,7 +70,7 @@ export default function ScoreSummary({
         {/* Student Details with inline edit */}
         <div className="flex items-center space-x-3.5">
           {/* Avatar Icon */}
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-base shadow-md shadow-indigo-500/25 shrink-0 ring-2 ring-[#DDD0C8] dark:ring-charcoal-600">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#323232] to-[#5c4a40] flex items-center justify-center text-[#DDD0C8] font-black text-base shadow-md shadow-black/20 shrink-0 ring-2 ring-[#DDD0C8] dark:ring-charcoal-600">
             {submission?.student_name ? submission.student_name.charAt(0).toUpperCase() : 'S'}
           </div>
 
@@ -162,15 +162,15 @@ export default function ScoreSummary({
                 {totalAwarded}
               </span>
               <span className="text-xs font-bold text-slate-400">/ {maxTotal}</span>
-              <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80 ml-1.5 shadow-2xs">
+              <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-[#DDD0C8]/60 dark:bg-[#3d2f2a] text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8] dark:border-[#5c4a40] ml-1.5 shadow-2xs">
                 {percentage}%
               </span>
             </div>
 
-            {/* Vibrant progress bar */}
+            {/* Warm progress bar */}
             <div className="w-36 bg-[#f4efe9] dark:bg-charcoal-800 rounded-full h-2.5 overflow-hidden ml-auto mt-1 border border-[#DDD0C8]/60 dark:border-charcoal-700">
               <div
-                className="bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500 h-full rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-emerald-500 via-amber-400 to-[#cbb89f] h-full rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, percentage)}%` }}
               />
             </div>

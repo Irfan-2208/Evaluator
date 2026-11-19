@@ -32,11 +32,11 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
   const isActive = !isDone && !isFailed;
 
   return (
-    <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm my-4 overflow-hidden transition-colors">
+    <div className="relative bg-white dark:bg-[#252525] rounded-2xl border-2 border-[#DDD0C8] dark:border-[#4A3830] shadow-sm my-4 overflow-hidden transition-colors">
       {/* Scanning animation bar at the top — only while active */}
       {isActive && (
         <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden">
-          <div className="animate-scanline h-full w-1/3 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+          <div className="animate-scanline h-full w-1/3 bg-gradient-to-r from-transparent via-[#cbb89f] to-transparent" />
         </div>
       )}
       {isDone && (
@@ -55,17 +55,17 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
             ) : isFailed ? (
               <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0" />
             ) : (
-              <Loader2 className="w-5 h-5 text-indigo-500 dark:text-indigo-400 animate-spin flex-shrink-0" />
+              <Loader2 className="w-5 h-5 text-[#6b5248] dark:text-[#cbb89f] animate-spin flex-shrink-0" />
             )}
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">{title}</span>
+            <span className="text-sm font-bold text-[#323232] dark:text-[#DDD0C8]">{title}</span>
           </div>
           <span
-            className={`text-xs font-bold px-2.5 py-1 rounded-md ${
+            className={`text-xs font-bold px-3 py-1 rounded-xl border shadow-2xs ${
               isDone
-                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                 : isFailed
-                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300'
-                : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
+                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                : 'bg-[#DDD0C8]/60 dark:bg-[#3d2f2a] text-[#323232] dark:text-[#DDD0C8] border-[#DDD0C8] dark:border-[#5c4a40]'
             }`}
           >
             {isDone ? '✓ Done' : isFailed ? 'Failed' : `${progress}%`}
@@ -87,15 +87,15 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
 
           {/* Current active step */}
           {isActive && currentStep && (
-            <div className="flex items-center space-x-2 text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/80 rounded-xl px-3 py-1.5 animate-pulse">
-              <Loader2 className="w-3.5 h-3.5 flex-shrink-0 text-indigo-500 dark:text-indigo-400 animate-spin" />
-              <span className="font-semibold">{currentStep}</span>
+            <div className="flex items-center space-x-2 text-xs text-[#323232] dark:text-[#DDD0C8] bg-[#DDD0C8]/30 dark:bg-[#3d2f2a] border border-[#DDD0C8] dark:border-[#5c4a40] rounded-xl px-3 py-1.5 animate-pulse">
+              <Loader2 className="w-3.5 h-3.5 flex-shrink-0 text-[#6b5248] dark:text-[#cbb89f] animate-spin" />
+              <span className="font-bold">{currentStep}</span>
             </div>
           )}
 
           {/* Idle/waiting placeholder */}
           {isActive && !currentStep && (
-            <div className="flex items-center space-x-2 text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl px-3 py-1.5">
+            <div className="flex items-center space-x-2 text-xs text-[#8c7268] dark:text-[#b0998e] bg-[#faf8f6] dark:bg-[#2e2018]/50 border border-[#DDD0C8] dark:border-[#4A3830] rounded-xl px-3 py-1.5">
               <Clock className="w-3.5 h-3.5 flex-shrink-0" />
               <span>Initializing...</span>
             </div>
@@ -105,20 +105,20 @@ export default function JobProgress({ jobId, onComplete, title = 'Processing Doc
           {isDone && (
             <div className="flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 rounded-xl px-3 py-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 text-emerald-500" />
-              <span className="font-semibold">Completed successfully</span>
+              <span className="font-bold">Completed successfully</span>
             </div>
           )}
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-[#DDD0C8]/40 dark:bg-[#3d2f2a] rounded-full h-2.5 overflow-hidden">
           <div
-            className={`h-2 rounded-full transition-all duration-500 ${
+            className={`h-2.5 rounded-full transition-all duration-500 ${
               isFailed
                 ? 'bg-rose-500'
                 : isDone
                 ? 'bg-emerald-500'
-                : 'bg-gradient-to-r from-indigo-500 to-violet-500'
+                : 'bg-gradient-to-r from-[#323232] via-[#5c4a40] to-[#cbb89f] dark:from-[#cbb89f] dark:to-[#DDD0C8]'
             }`}
             style={{ width: `${Math.max(5, Math.min(100, progress))}%` }}
           />

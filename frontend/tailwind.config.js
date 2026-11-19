@@ -20,17 +20,17 @@ export default {
           950: '#1e1710',
         },
         charcoal: {
-          50:  '#f5f5f5',
-          100: '#ebebeb',
-          200: '#d4d4d4',
-          300: '#ababab',
-          400: '#828282',
-          500: '#5e5e5e',
-          600: '#474747',
-          700: '#323232',   // primary dark grey
-          800: '#252525',
-          900: '#1a1a1a',
-          950: '#0d0d0d',
+          50:  '#f5f2f0',
+          100: '#ede8e3',
+          200: '#d4c8bf',
+          300: '#b0998e',
+          400: '#8c7268',
+          500: '#6b5248',
+          600: '#52403a',   // warm grey-brown mid
+          700: '#3d2f2a',   // primary dark warm grey-brown
+          800: '#2e2320',   // deep warm brown-grey
+          900: '#231a17',   // very dark brown
+          950: '#160f0d',   // near-black dark brown
         },
         dark: {
           50: '#f8fafc',

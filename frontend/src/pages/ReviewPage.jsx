@@ -48,12 +48,12 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
   }
 
   return (
-    <div className="h-full min-h-0 flex flex-col bg-[#f0eae3]/60 dark:bg-charcoal-950 text-slate-800 dark:text-slate-200 select-none overflow-hidden transition-colors duration-200">
+    <div className="h-full min-h-0 flex flex-col bg-[#f0eae3]/60 dark:bg-[#1e1510] text-slate-800 dark:text-[#DDD0C8] select-none overflow-hidden transition-colors duration-200">
       {/* Top Toolbar — Fixed & Non-scrolling */}
-      <div className="h-11 bg-white/95 dark:bg-[#252525]/95 border-b border-[#DDD0C8] dark:border-charcoal-700 px-4 flex items-center justify-between flex-shrink-0 z-10 shadow-2xs transition-colors duration-200">
+      <div className="h-11 bg-[#f0ebe5]/95 dark:bg-[#2e2320]/95 border-b border-[#DDD0C8] dark:border-[#4A3830] px-4 flex items-center justify-between flex-shrink-0 z-10 shadow-2xs transition-colors duration-200">
         <div className="flex items-center space-x-2">
           <span className="text-xs font-bold text-[#323232] dark:text-[#DDD0C8]">Answer Sheet</span>
-          <span className="text-[11px] font-black px-2.5 py-0.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-lg shadow-xs">
+          <span className="text-[11px] font-black px-2.5 py-0.5 bg-[#323232] dark:bg-[#DDD0C8] text-[#DDD0C8] dark:text-[#323232] rounded-lg shadow-xs">
             Page {currentPage} of {images.length}
           </span>
           {showAnnotator && (
@@ -67,7 +67,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
         <div className="flex items-center space-x-1">
           <button
             onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}
-            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-charcoal-700 text-slate-600 dark:text-slate-300 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-[#4A3830] text-slate-600 dark:text-[#DDD0C8] transition-colors"
             title="Zoom Out (shortcut: -)"
           >
             <ZoomOut className="w-4 h-4" />
@@ -77,14 +77,14 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
           </span>
           <button
             onClick={() => setScale((s) => Math.min(3.0, s + 0.2))}
-            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-charcoal-700 text-slate-600 dark:text-slate-300 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-[#4A3830] text-slate-600 dark:text-[#DDD0C8] transition-colors"
             title="Zoom In (shortcut: +)"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
           <button
             onClick={() => setScale(1)}
-            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-charcoal-700 text-slate-600 dark:text-slate-300 transition-colors ml-1"
+            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-[#4A3830] text-slate-600 dark:text-[#DDD0C8] transition-colors ml-1"
             title="Reset Zoom"
           >
             <RotateCcw className="w-4 h-4" />
@@ -95,7 +95,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
       {/* ── SEPARATE LEFT SCROLL CONTAINER ── */}
       <div
         ref={containerRef}
-        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar px-5 py-5 space-y-6 bg-[#ede6df]/50 dark:bg-charcoal-950 transition-colors duration-200 relative"
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar px-5 py-5 space-y-6 bg-[#ede6df]/50 dark:bg-[#1a110d] transition-colors duration-200 relative"
       >
         {images.map((imgUrl, idx) => {
           const pageNum = idx + 1;
@@ -111,7 +111,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
               }}
               className={`relative transition-all duration-300 rounded-xl p-1.5 ${
                 isActive
-                  ? 'ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-200 dark:ring-offset-slate-950 bg-indigo-50/50 dark:bg-slate-900/60 shadow-md'
+                  ? 'ring-2 ring-amber-700 ring-offset-2 ring-offset-[#1a110d] dark:ring-offset-[#1a110d] bg-amber-900/20 shadow-md'
                   : 'opacity-85 hover:opacity-100'
               }`}
               style={{ transformOrigin: 'top center', transform: `scale(${scale})` }}
@@ -120,8 +120,8 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
               <div
                 className={`inline-block mb-1 text-[11px] font-bold px-2.5 py-0.5 rounded shadow-xs ${
                   isActive
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
+                    ? 'bg-amber-800 text-[#DDD0C8]'
+                    : 'bg-[#f0ebe5] dark:bg-[#3d2f2a] text-slate-700 dark:text-[#DDD0C8] border border-[#DDD0C8] dark:border-[#5c4a40]'
                 }`}
               >
                 Page {pageNum}
@@ -144,7 +144,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
 
       {/* ── BOTTOM THUMBNAIL QUICK-JUMP STRIP ── */}
       {images.length > 1 && (
-        <div className="h-[76px] bg-white/95 dark:bg-[#252525]/95 border-t border-[#DDD0C8] dark:border-charcoal-700 px-3 py-1.5 flex items-center space-x-2.5 overflow-x-auto flex-shrink-0 z-10 custom-scrollbar transition-colors duration-200">
+        <div className="h-[76px] bg-[#f0ebe5]/95 dark:bg-[#2e2320]/95 border-t border-[#DDD0C8] dark:border-[#4A3830] px-3 py-1.5 flex items-center space-x-2.5 overflow-x-auto flex-shrink-0 z-10 custom-scrollbar transition-colors duration-200">
           {images.map((imgUrl, idx) => {
             const pageNum = idx + 1;
             const isSelected = currentPage === pageNum;
@@ -158,8 +158,8 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
                 onClick={() => onPageSelect?.(pageNum)}
                 className={`relative flex-shrink-0 h-14 w-11 rounded-xl border-2 overflow-hidden transition-all duration-150 cursor-pointer ${
                   isSelected
-                    ? 'border-indigo-600 ring-2 ring-indigo-500/50 scale-105 shadow-md -translate-y-0.5'
-                    : 'border-[#DDD0C8] dark:border-charcoal-600 hover:border-slate-400 dark:hover:border-slate-500 opacity-75 hover:opacity-100'
+                    ? 'border-amber-700 ring-2 ring-amber-600/50 scale-105 shadow-md -translate-y-0.5'
+                    : 'border-[#DDD0C8] dark:border-[#4A3830] hover:border-[#b89e82] dark:hover:border-[#7d6449] opacity-75 hover:opacity-100'
                 }`}
                 title={`Jump to Page ${pageNum}`}
               >
@@ -174,8 +174,8 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
                 <span
                   className={`absolute bottom-0 inset-x-0 text-[10px] font-black py-0.5 text-center transition-colors ${
                     isSelected
-                      ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white'
-                      : 'bg-[#323232]/90 text-[#DDD0C8]'
+                      ? 'bg-gradient-to-r from-amber-800 to-amber-700 text-[#DDD0C8]'
+                      : 'bg-[#3d2f2a]/90 text-[#DDD0C8]'
                   }`}
                 >
                   {pageNum}
@@ -346,7 +346,7 @@ export default function ReviewPage() {
     return (
       <Layout fullHeight={true}>
         <div className="h-full flex flex-col items-center justify-center py-20 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent mx-auto" />
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#323232] dark:border-[#DDD0C8] border-t-transparent mx-auto" />
           <p className="text-xs text-slate-400 mt-3">Loading student evaluation and page scans...</p>
         </div>
       </Layout>
@@ -358,10 +358,10 @@ export default function ReviewPage() {
   return (
     <Layout fullHeight={true}>
       {/* Breadcrumb Header Bar — Fixed & Non-scrolling */}
-      <div className="bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs flex-shrink-0 z-10 transition-colors duration-200">
+      <div className="bg-[#f0ebe5]/95 dark:bg-[#2e2320]/95 border-b border-[#DDD0C8] dark:border-[#4A3830] px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs flex-shrink-0 z-10 transition-colors duration-200">
         <Link
           to={`/exams/${examId}`}
-          className="inline-flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+          className="inline-flex items-center text-[#5c4a40] dark:text-[#DDD0C8]/80 hover:text-[#3d2f2a] dark:hover:text-[#DDD0C8] transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           Back to Exam Console
@@ -373,8 +373,8 @@ export default function ReviewPage() {
             onClick={() => setShowAnnotator((v) => !v)}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-95 ${
               showAnnotator
-                ? 'bg-amber-500 text-white shadow-sm'
-                : 'text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-950/40 dark:hover:text-amber-300 border border-slate-200 dark:border-slate-700'
+                ? 'bg-amber-700 text-[#DDD0C8] shadow-sm'
+                : 'text-[#5c4a40] dark:text-[#DDD0C8]/80 bg-[#DDD0C8]/30 dark:bg-[#3d2f2a] hover:bg-amber-100 hover:text-amber-800 dark:hover:bg-[#4A3830] dark:hover:text-[#DDD0C8] border border-[#DDD0C8] dark:border-[#4A3830]'
             }`}
             title="Toggle answer sheet annotator (highlighter, pen, eraser)"
           >
@@ -386,12 +386,12 @@ export default function ReviewPage() {
           <ThemeToggle />
 
           {/* Mobile View Switcher */}
-          <div className="flex md:hidden bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5">
+          <div className="flex md:hidden bg-[#DDD0C8]/40 dark:bg-[#3d2f2a] rounded-lg p-0.5">
             <button
               onClick={() => setMobileTab('sheet')}
               className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
                 mobileTab === 'sheet'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-xs'
+                  ? 'bg-white dark:bg-[#2e2320] text-[#323232] dark:text-[#DDD0C8] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400'
               }`}
             >
@@ -401,7 +401,7 @@ export default function ReviewPage() {
               onClick={() => setMobileTab('evaluation')}
               className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
                 mobileTab === 'evaluation'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-xs'
+                  ? 'bg-white dark:bg-[#2e2320] text-[#323232] dark:text-[#DDD0C8] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400'
               }`}
             >
@@ -415,7 +415,7 @@ export default function ReviewPage() {
       <div className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
         {/* ── LEFT 50%: Dedicated Scrollable Answer Sheet ── */}
         <div
-          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col overflow-hidden border-r border-slate-200 dark:border-slate-800 relative ${
+          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col overflow-hidden border-r border-[#DDD0C8] dark:border-[#4A3830] relative ${
             mobileTab === 'sheet' ? 'flex' : 'hidden md:flex'
           }`}
         >
@@ -440,7 +440,7 @@ export default function ReviewPage() {
 
         {/* ── RIGHT 50%: Dedicated Scrollable Evaluation Cards ── */}
         <div
-          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col bg-[#f8f5f1] dark:bg-charcoal-900 border-l border-[#DDD0C8]/60 dark:border-charcoal-700 overflow-hidden transition-colors duration-200 ${
+          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col bg-[#f5f0eb] dark:bg-[#231a17] border-l border-[#DDD0C8]/60 dark:border-[#4A3830] overflow-hidden transition-colors duration-200 ${
             mobileTab === 'evaluation' ? 'flex' : 'hidden md:flex'
           }`}
         >

@@ -21,6 +21,7 @@ import {
   Scale,
   Award,
   ArrowRight,
+  PenLine,
 } from 'lucide-react';
 
 // ── Score Circular Arc Gauge ──────────────────────────────────────────────────
@@ -30,7 +31,7 @@ function ScoreArcGauge({ score, max }) {
   const circ = 2 * Math.PI * r;
   const dash = circ * pct;
   const color =
-    pct >= 0.85 ? '#8B0000' : pct >= 0.5 ? '#6366f1' : pct >= 0.25 ? '#f59e0b' : '#f43f5e';
+    pct >= 0.85 ? '#10b981' : pct >= 0.5 ? '#6366f1' : pct >= 0.25 ? '#f59e0b' : '#f43f5e';
 
   return (
     <div className="relative flex items-center justify-center shrink-0">
@@ -93,6 +94,8 @@ export default function EvaluationCard({
   onReset,
   onReEvaluate,
   onJumpToPage,
+  onToggleAnnotate,
+  isAnnotating = false,
   isReEvaluating = false,
 }) {
   const [marks, setMarks] = useState(evaluation.final_marks ?? evaluation.ai_marks ?? 0);
@@ -128,8 +131,8 @@ export default function EvaluationCard({
 
   const scoreTheme = isFullScore
     ? {
-        borderTop: 'bg-gradient-to-r from-[#7a0c0c] via-[#8B0000] to-[#991b1b]',
-        badge: 'bg-red-50 dark:bg-red-950/80 text-red-950 dark:text-red-200 border-red-300 dark:border-red-800',
+        borderTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600',
+        badge: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200 border-emerald-400 dark:border-emerald-700',
         label: 'Full Marks 🎉',
       }
     : isPartialScore
@@ -174,16 +177,16 @@ export default function EvaluationCard({
     <div
       id={`eval-card-${evaluation.id}`}
       data-eval-id={String(evaluation.id)}
-      className="relative rounded-3xl border-2 border-[#DDD0C8] dark:border-charcoal-600 bg-[#fdfbf9] dark:bg-[#1f1f1f] shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden mb-6 animate-slideUp group"
+      className="relative rounded-3xl border-2 border-[#DDD0C8] dark:border-[#4A3830] bg-[#fdfbf9] dark:bg-[#2a1f1a] shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden mb-6 animate-slideUp group"
     >
       {/* ── TOP ACCENT COLOR STRIP ── */}
       <div className={`h-2 w-full ${scoreTheme.borderTop}`} />
 
       {/* ── RE-EVALUATING OVERLAY ── */}
       {isReEvaluating && (
-        <div className="absolute inset-0 bg-white/95 dark:bg-[#1f1f1f]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center animate-fadeIn p-6">
+        <div className="absolute inset-0 bg-white/95 dark:bg-[#2a1f1a]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center animate-fadeIn p-6">
           <div className="relative mb-3">
-            <div className="w-12 h-12 rounded-full border-4 border-[#DDD0C8] dark:border-charcoal-600 border-t-indigo-600 dark:border-t-indigo-400 animate-spin" />
+            <div className="w-12 h-12 rounded-full border-4 border-[#DDD0C8] dark:border-[#4A3830] border-t-amber-700 dark:border-t-amber-600 animate-spin" />
             <Brain className="w-5 h-5 text-indigo-600 dark:text-indigo-400 absolute inset-0 m-auto animate-pulse" />
           </div>
           <p className="text-sm font-extrabold text-[#323232] dark:text-white">AI Examiner is Re-Evaluating...</p>
@@ -195,12 +198,12 @@ export default function EvaluationCard({
       )}
 
       {/* ── CARD HEADER BAR ── */}
-      <div className="px-5 py-4 border-b border-[#DDD0C8] dark:border-charcoal-700 bg-gradient-to-r from-[#f5eee6] via-[#faf6f0] to-[#f5eee6] dark:from-[#2a2624] dark:via-[#22201e] dark:to-[#2a2624]">
+      <div className="px-5 py-4 border-b border-[#DDD0C8] dark:border-[#4A3830] bg-gradient-to-r from-[#f5eee6] via-[#faf6f0] to-[#f5eee6] dark:from-[#2e2018] dark:via-[#261b14] dark:to-[#2e2018]">
         <div className="flex items-center justify-between gap-3">
           {/* Left: Question Badge & Info */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Bold Question Number Badge with Gradient & Border */}
-            <span className="font-black text-xs px-3.5 py-1.5 bg-[#323232] dark:bg-[#DDD0C8] text-[#DDD0C8] dark:text-[#323232] rounded-xl shadow-xs tracking-wider flex items-center space-x-1.5 border border-[#DDD0C8]/40 dark:border-charcoal-600">
+            <span className="font-black text-xs px-3.5 py-1.5 bg-[#3d2f2a] dark:bg-[#DDD0C8] text-[#DDD0C8] dark:text-[#3d2f2a] rounded-xl shadow-xs tracking-wider flex items-center space-x-1.5 border border-[#DDD0C8]/40 dark:border-[#5c4a40]">
               <span className="text-indigo-400 dark:text-indigo-600">●</span>
               <span>QUESTION {evaluation.question_no || '?'}</span>
             </span>
@@ -210,15 +213,15 @@ export default function EvaluationCard({
               {maxMarks} {maxMarks === 1 ? 'Mark' : 'Marks'}
             </span>
 
-            {/* Jump to Page Badge in Electric Indigo */}
+            {/* Jump to Page Badge in Warm Palette */}
             {pageNumbers.map((p) => (
               <button
                 key={p}
                 onClick={() => onJumpToPage(p)}
-                className="inline-flex items-center space-x-1.5 text-xs font-extrabold text-indigo-700 dark:text-indigo-200 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/90 border border-indigo-200 dark:border-indigo-700/80 px-2.5 py-1 rounded-xl shadow-2xs transition-all active:scale-95"
+                className="inline-flex items-center space-x-1.5 text-xs font-black text-[#323232] dark:text-[#DDD0C8] bg-[#DDD0C8]/60 dark:bg-[#3d2f2a] hover:bg-[#DDD0C8] dark:hover:bg-[#4A3830] border border-[#DDD0C8] dark:border-[#5c4a40] px-2.5 py-1 rounded-xl shadow-2xs transition-all active:scale-95"
                 title={`Jump answer sheet to Page ${p}`}
               >
-                <ExternalLink className="w-3 h-3 text-indigo-500" />
+                <ExternalLink className="w-3 h-3 text-[#6b5248] dark:text-[#cbb89f]" />
                 <span>Page {p}</span>
               </button>
             ))}
@@ -227,6 +230,21 @@ export default function EvaluationCard({
             <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border shadow-2xs ${scoreTheme.badge}`}>
               {scoreTheme.label}
             </span>
+
+            {/* Annotation Markup Button */}
+            <button
+              type="button"
+              onClick={() => (onToggleAnnotate ? onToggleAnnotate(pageNumbers[0] || 1) : onJumpToPage(pageNumbers[0] || 1))}
+              className={`inline-flex items-center space-x-1.5 text-xs font-black px-3 py-1 rounded-xl transition-all active:scale-95 shadow-2xs border ${
+                isAnnotating
+                  ? 'bg-amber-500 text-white border-amber-600 shadow-md shadow-amber-500/20 ring-2 ring-amber-400/50'
+                  : 'bg-white dark:bg-charcoal-800 text-[#323232] dark:text-[#DDD0C8] hover:bg-amber-50 dark:hover:bg-amber-950/60 border border-[#DDD0C8] dark:border-charcoal-600'
+              }`}
+              title="Annotate & markup answer sheet for this question (pen, tick, cross, highlighter)"
+            >
+              <PenLine className={`w-3.5 h-3.5 ${isAnnotating ? 'text-white' : 'text-amber-500'}`} />
+              <span>{isAnnotating ? 'Annotating…' : 'Annotate'}</span>
+            </button>
 
             {/* Flags */}
             {isFlagged && (
@@ -260,13 +278,13 @@ export default function EvaluationCard({
         {/* Confidence Strip */}
         <div className="mt-3 pt-2.5 border-t border-[#DDD0C8]/60 dark:border-charcoal-700 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#8B0000] animate-pulse ring-4 ring-[#8B0000]/20" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse ring-4 ring-emerald-500/20" />
             <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
               AI Confidence: <strong className="text-[#323232] dark:text-[#DDD0C8] font-black">{Math.round(confidence * 100)}%</strong>
             </span>
             <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
               confidence >= 0.85
-                ? 'bg-red-50 dark:bg-red-950/80 text-red-950 dark:text-red-200 border-red-300 dark:border-red-800'
+                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
                 : confidence >= 0.6
                 ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
                 : 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-700'
@@ -285,20 +303,20 @@ export default function EvaluationCard({
       {!collapsed && (
         <div className="p-5 space-y-4 animate-fadeIn">
 
-          {/* 1. Question Statement — Deep Indigo / Cobalt Themed Card */}
+          {/* 1. Question Statement — Warm Theme Card */}
           {evaluation.question_text && (
-            <div className="rounded-2xl p-4 bg-gradient-to-r from-indigo-50/90 via-slate-50 to-indigo-50/40 dark:from-[#1a1f36] dark:via-[#16192e] dark:to-[#1a1f36] border-2 border-indigo-200 dark:border-indigo-800/80 shadow-xs relative overflow-hidden">
-              <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-indigo-500" />
+            <div className="rounded-2xl p-4 bg-gradient-to-r from-[#f7f3ee] via-[#faf7f2] to-[#f7f3ee] dark:from-[#2e231c] dark:via-[#261d17] dark:to-[#2e231c] border-2 border-[#DDD0C8] dark:border-[#5c4a40] shadow-xs relative overflow-hidden">
+              <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-[#52403a] dark:bg-[#DDD0C8]" />
               <div className="pl-2">
                 <div className="flex items-center space-x-2 mb-1.5">
-                  <div className="w-5 h-5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-5 h-5 rounded-md bg-[#323232] dark:bg-[#DDD0C8] text-[#DDD0C8] dark:text-[#323232] flex items-center justify-center text-[10px] font-bold">
                     ?
                   </div>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-[#323232] dark:text-[#DDD0C8]">
                     Question Statement
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-indigo-50 leading-relaxed">
+                <p className="text-xs sm:text-sm font-semibold text-[#323232] dark:text-[#ede4da] leading-relaxed">
                   {evaluation.question_text}
                 </p>
               </div>
@@ -349,7 +367,7 @@ export default function EvaluationCard({
           )}
 
           {/* 3. Student Written Response — Parchment & Slate Notebook Transcript */}
-          <div className="rounded-2xl p-4 bg-gradient-to-r from-[#faf6f0] via-[#f7f1e8] to-[#faf6f0] dark:from-[#262320] dark:via-[#1e1c1a] dark:to-[#262320] border-2 border-[#DDD0C8] dark:border-charcoal-600 shadow-xs relative overflow-hidden">
+          <div className="rounded-2xl p-4 bg-gradient-to-r from-[#faf6f0] via-[#f7f1e8] to-[#faf6f0] dark:from-[#2e2318] dark:via-[#261e14] dark:to-[#2e2318] border-2 border-[#DDD0C8] dark:border-[#4A3830] shadow-xs relative overflow-hidden">
             <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-[#323232] dark:bg-[#DDD0C8]" />
             <div className="pl-2">
               <div className="flex items-center justify-between mb-2">
@@ -364,7 +382,7 @@ export default function EvaluationCard({
                 <CopyBtn text={evaluation.transcribed_answer} />
               </div>
 
-              <div className="font-mono text-xs sm:text-[13px] font-medium text-[#323232] dark:text-[#f0e6df] bg-white dark:bg-[#151413] p-4 rounded-xl border border-[#DDD0C8] dark:border-charcoal-700 leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar shadow-inner">
+              <div className="font-mono text-xs sm:text-[13px] font-medium text-[#323232] dark:text-[#f0e6df] bg-white dark:bg-[#1e1510] p-4 rounded-xl border border-[#DDD0C8] dark:border-[#4A3830] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar shadow-inner">
                 {evaluation.transcribed_answer || (
                   <span className="italic text-slate-400">No student response detected or blank answer</span>
                 )}
@@ -375,7 +393,7 @@ export default function EvaluationCard({
           {/* 4. 2-Column Vibrant Bento: Points Matched (Emerald) vs Missing Points (Rose) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Points Matched Card — Rich Emerald / Forest Jade */}
-            <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-50 via-[#f0fdf4] to-teal-50/50 dark:from-[#0d261c] dark:via-[#091f16] dark:to-[#061811] border-2 border-emerald-300 dark:border-emerald-600/70 shadow-sm relative overflow-hidden">
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-50 via-[#f0fdf4] to-teal-50/50 dark:from-[#0d2218] dark:via-[#0a1c13] dark:to-[#071510] border-2 border-emerald-300 dark:border-emerald-600/70 shadow-sm relative overflow-hidden">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-emerald-200/80 dark:border-emerald-800/80">
                 <div className="flex items-center space-x-2">
                   <div className="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
@@ -415,7 +433,7 @@ export default function EvaluationCard({
             </div>
 
             {/* Points Missed Card — Rich Crimson / Coral Rose */}
-            <div className="rounded-2xl p-4 bg-gradient-to-br from-rose-50 via-[#fff1f2] to-red-50/50 dark:from-[#2e1219] dark:via-[#240d13] dark:to-[#1c080d] border-2 border-rose-300 dark:border-rose-600/70 shadow-sm relative overflow-hidden">
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-rose-50 via-[#fff1f2] to-red-50/50 dark:from-[#2e1218] dark:via-[#240d12] dark:to-[#1c080c] border-2 border-rose-300 dark:border-rose-600/70 shadow-sm relative overflow-hidden">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-rose-200/80 dark:border-rose-800/80">
                 <div className="flex items-center space-x-2">
                   <div className="w-7 h-7 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-xs">
@@ -534,7 +552,7 @@ export default function EvaluationCard({
           )}
 
           {/* ── TEACHER INTERACTIVE SCORING BAR ── */}
-          <div className="pt-4 border-t-2 border-[#DDD0C8] dark:border-charcoal-700 bg-gradient-to-r from-[#f5efe8] via-[#faf6f0] to-[#f5efe8] dark:from-[#252220] dark:via-[#1e1c1b] dark:to-[#252220] -mx-5 -mb-5 p-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="pt-4 border-t-2 border-[#DDD0C8] dark:border-[#4A3830] bg-gradient-to-r from-[#f5efe8] via-[#faf6f0] to-[#f5efe8] dark:from-[#2e2318] dark:via-[#261e14] dark:to-[#2e2318] -mx-5 -mb-5 p-5 flex flex-wrap items-center justify-between gap-3">
             {/* Left: Quick Score Presets & Stepper */}
             <div className="flex items-center flex-wrap gap-2.5">
               <span className="text-xs font-black uppercase tracking-wider text-[#323232] dark:text-[#DDD0C8]">
@@ -542,7 +560,7 @@ export default function EvaluationCard({
               </span>
 
               {/* 1-Click Score Presets with High-Contrast Themed Colors */}
-              <div className="inline-flex items-center space-x-1 p-1 rounded-xl bg-white dark:bg-charcoal-900 border border-[#DDD0C8] dark:border-charcoal-600 shadow-2xs">
+              <div className="inline-flex items-center space-x-1 p-1 rounded-xl bg-white dark:bg-[#1e1510] border border-[#DDD0C8] dark:border-[#4A3830] shadow-2xs">
                 <button
                   type="button"
                   onClick={() => handleSetExact(0)}
@@ -574,8 +592,8 @@ export default function EvaluationCard({
                   onClick={() => handleSetExact(maxMarks)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all ${
                     marks === maxMarks
-                      ? 'bg-[#8B0000] text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-950/60'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
                   }`}
                   title="Assign Full Marks"
                 >
@@ -652,7 +670,7 @@ export default function EvaluationCard({
                 type="button"
                 onClick={() => onReEvaluate(evaluation.id)}
                 disabled={isReEvaluating}
-                className="inline-flex items-center space-x-2 px-4 py-2 text-xs font-black text-white bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="inline-flex items-center space-x-2 px-4 py-2 text-xs font-black bg-gradient-to-r from-[#323232] via-[#474747] to-[#5c4a40] hover:from-[#1f1f1f] hover:to-[#474747] dark:from-[#DDD0C8] dark:to-[#cbb89f] text-white dark:text-[#323232] rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50"
                 title="Re-run AI evaluation for this question"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isReEvaluating ? 'animate-spin' : ''}`} />

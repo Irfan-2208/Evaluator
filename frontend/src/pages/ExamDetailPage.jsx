@@ -32,14 +32,14 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
 
   return (
     <div
-      className={`bg-white dark:bg-[#252525] rounded-2xl border border-[#DDD0C8] dark:border-charcoal-700 shadow-xs mb-5 overflow-hidden transition-all duration-300 ${
+      className={`bg-white dark:bg-[#252525] rounded-3xl border-2 border-[#DDD0C8] dark:border-[#4A3830] shadow-sm mb-6 overflow-hidden transition-all duration-300 ${
         locked ? 'opacity-80' : ''
       }`}
     >
       {/* Card Header */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-6 py-4 hover:bg-[#faf8f6] dark:hover:bg-charcoal-800 transition-colors"
+        className="w-full flex items-center justify-between px-6 py-4.5 hover:bg-[#faf8f6] dark:hover:bg-[#2e2018] transition-colors"
       >
         <div className="flex items-center space-x-3">
           {/* Step number circle */}
@@ -48,8 +48,8 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
               badge === 'done'
                 ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300'
                 : badge === 'saved'
-                ? 'bg-[#DDD0C8]/80 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8]'
-                : 'bg-[#DDD0C8]/40 dark:bg-charcoal-800 text-slate-600 dark:text-slate-400'
+                ? 'bg-[#DDD0C8]/80 dark:bg-[#3d2f2a] text-[#323232] dark:text-[#DDD0C8]'
+                : 'bg-[#DDD0C8]/40 dark:bg-[#3d2f2a] text-[#323232] dark:text-[#DDD0C8]'
             }`}
           >
             {badge === 'done' || badge === 'saved' ? (
@@ -70,7 +70,7 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
             }`}
           />
           <span
-            className={`text-sm font-semibold ${
+            className={`text-sm font-bold ${
               locked ? 'text-slate-400' : 'text-[#323232] dark:text-white'
             }`}
           >
@@ -80,12 +80,12 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
 
         <div className="flex items-center space-x-2">
           {badge === 'done' && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
               ✓ Confirmed
             </span>
           )}
           {badge === 'saved' && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#DDD0C8]/60 dark:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8] dark:border-charcoal-600">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#DDD0C8]/60 dark:bg-[#3d2f2a] text-[#323232] dark:text-[#DDD0C8] border border-[#DDD0C8] dark:border-[#5c4a40]">
               ✓ Saved
             </span>
           )}
@@ -102,7 +102,7 @@ function StepCard({ step, title, icon: Icon, badge, locked, children, defaultOpe
 
       {/* Collapsible Body */}
       {open && (
-        <div className="px-6 pb-6 border-t border-[#DDD0C8]/50 dark:border-charcoal-700">
+        <div className="px-6 pb-6 border-t border-[#DDD0C8]/60 dark:border-[#4A3830]">
           <div className="pt-5">{children}</div>
         </div>
       )}
@@ -311,7 +311,7 @@ export default function ExamDetailPage() {
     return (
       <Layout>
         <div className="py-20 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#323232] dark:border-[#DDD0C8] border-t-transparent mx-auto"></div>
           <p className="text-xs text-slate-400 mt-3">Loading exam workspace...</p>
         </div>
       </Layout>
@@ -462,15 +462,15 @@ export default function ExamDetailPage() {
           badge={questionsConfirmed ? 'done' : null}
           defaultOpen={true}
         >
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-400 p-6 text-center transition-colors mb-4">
-            <FileText className="w-8 h-8 text-indigo-500 mx-auto mb-2" />
-            <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mb-0.5">
+          <div className="bg-[#faf8f6] dark:bg-[#2e2018]/40 rounded-2xl border-2 border-dashed border-[#DDD0C8] dark:border-[#5c4a40] hover:border-[#b89e82] dark:hover:border-[#cbb89f] p-6 text-center transition-colors mb-4">
+            <FileText className="w-8 h-8 text-[#6b5248] dark:text-[#cbb89f] mx-auto mb-2" />
+            <p className="text-xs font-bold text-[#323232] dark:text-[#DDD0C8] mb-0.5">
               {questionsConfirmed ? 'Re-upload Question Paper' : 'Upload Question Paper'}
             </p>
-            <p className="text-xs text-slate-400 dark:text-slate-400 max-w-sm mx-auto mb-4">
+            <p className="text-xs text-[#8c7268] dark:text-[#cbb89f] max-w-sm mx-auto mb-4">
               PDF or image — Gemini Vision extracts all questions, parts, and marks automatically.
             </p>
-            <label className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-all active:scale-95">
+            <label className="inline-flex items-center px-4 py-2.5 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cbb89f] text-white dark:text-[#323232] text-xs font-black rounded-xl shadow-md cursor-pointer transition-all active:scale-95">
               <Upload className="w-3.5 h-3.5 mr-1.5" />
               Select Question Paper (PDF / Image)
               <input
@@ -512,26 +512,26 @@ export default function ExamDetailPage() {
           defaultOpen={questionsConfirmed}
         >
           {!questionsConfirmed && (
-            <div className="flex items-center space-x-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-lg px-4 py-2.5 mb-4">
-              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-amber-500" />
+            <div className="flex items-center space-x-2 text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-xl px-4 py-2.5 mb-4 font-medium">
+              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
               <span>Tip: Confirm your questions first so the AI can map solutions properly. You can still upload a key below.</span>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* Option A: Upload Key */}
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-5 flex flex-col justify-between">
+            <div className="bg-[#faf8f6] dark:bg-[#2e2018]/40 rounded-2xl border border-[#DDD0C8] dark:border-[#4A3830] p-5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 text-slate-800 dark:text-white font-semibold text-sm mb-1">
-                  <Upload className="w-4 h-4 text-indigo-500" />
+                <div className="flex items-center space-x-2 text-[#323232] dark:text-[#DDD0C8] font-bold text-sm mb-1">
+                  <Upload className="w-4 h-4 text-[#6b5248] dark:text-[#cbb89f]" />
                   <span>Upload Official Answer Key</span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[#8c7268] dark:text-[#cbb89f]">
                   Have an official key or solution doc? Upload it — Gemini extracts and maps answers.
                 </p>
               </div>
-              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg shadow-2xs cursor-pointer transition-all active:scale-95">
-                <KeyRound className="w-3.5 h-3.5 mr-1.5 text-indigo-600 dark:text-indigo-400" />
+              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white dark:bg-[#3d2f2a] border border-[#DDD0C8] dark:border-[#5c4a40] hover:bg-[#faf8f6] dark:hover:bg-[#4A3830] text-[#323232] dark:text-[#DDD0C8] text-xs font-bold rounded-xl shadow-2xs cursor-pointer transition-all active:scale-95">
+                <KeyRound className="w-3.5 h-3.5 mr-1.5 text-[#6b5248] dark:text-[#cbb89f]" />
                 Upload Key (PDF / Image)
                 <input
                   type="file"
@@ -543,22 +543,22 @@ export default function ExamDetailPage() {
             </div>
 
             {/* Option B: Generate with AI */}
-            <div className="bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 rounded-xl border border-indigo-200 dark:border-indigo-900/60 p-5 flex flex-col justify-between">
+            <div className="bg-gradient-to-br from-[#faf6f0] to-[#f5eee6] dark:from-[#2e2018] dark:to-[#261b14] rounded-2xl border-2 border-[#DDD0C8] dark:border-[#5c4a40] p-5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 text-indigo-900 dark:text-indigo-200 font-semibold text-sm mb-1">
-                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <div className="flex items-center space-x-2 text-[#323232] dark:text-[#DDD0C8] font-bold text-sm mb-1">
+                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>Generate Ideal Answers with AI</span>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
+                <p className="text-xs text-[#8c7268] dark:text-[#cbb89f]">
                   No answer key? Gemini will solve the paper and generate model answers with step-by-step rubrics.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleGenerateAK}
-                className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all active:scale-95"
+                className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cbb89f] text-white dark:text-[#323232] text-xs font-black rounded-xl shadow-md transition-all active:scale-95"
               >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-amber-400 dark:text-amber-700" />
                 Generate AI Model Answers
               </button>
             </div>
@@ -592,24 +592,24 @@ export default function ExamDetailPage() {
           defaultOpen={keyConfirmed}
         >
           {!keyConfirmed && (
-            <div className="flex items-center space-x-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-lg px-4 py-2.5 mb-4">
-              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-amber-500" />
+            <div className="flex items-center space-x-2 text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-xl px-4 py-2.5 mb-4 font-medium">
+              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
               <span>Tip: Set up your answer key first so Gemini can grade each question accurately against your rubrics.</span>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* Single sheet */}
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-5 flex flex-col justify-between">
+            <div className="bg-[#faf8f6] dark:bg-[#2e2018]/40 rounded-2xl border border-[#DDD0C8] dark:border-[#4A3830] p-5 flex flex-col justify-between">
               <div>
-                <h3 className="font-semibold text-sm text-slate-900 dark:text-white mb-1">
+                <h3 className="font-bold text-sm text-[#323232] dark:text-[#DDD0C8] mb-1">
                   Upload Single Answer Sheet
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[#8c7268] dark:text-[#cbb89f]">
                   Upload one student's handwritten PDF. Gemini reads handwriting, detects name/roll, and grades every question.
                 </p>
               </div>
-              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-all active:scale-95">
+              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cbb89f] text-white dark:text-[#323232] text-xs font-black rounded-xl shadow-md cursor-pointer transition-all active:scale-95">
                 <Upload className="w-3.5 h-3.5 mr-1.5" />
                 Select Student Sheet (PDF)
                 <input
@@ -622,17 +622,17 @@ export default function ExamDetailPage() {
             </div>
 
             {/* Bulk upload */}
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-5 flex flex-col justify-between">
+            <div className="bg-[#faf8f6] dark:bg-[#2e2018]/40 rounded-2xl border border-[#DDD0C8] dark:border-[#4A3830] p-5 flex flex-col justify-between">
               <div>
-                <h3 className="font-semibold text-sm text-slate-900 dark:text-white mb-1">
+                <h3 className="font-bold text-sm text-[#323232] dark:text-[#DDD0C8] mb-1">
                   Bulk Upload Answer Sheets
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[#8c7268] dark:text-[#cbb89f]">
                   Upload multiple PDFs at once. All sheets are converted and graded in a background queue.
                 </p>
               </div>
-              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg shadow-2xs cursor-pointer transition-all active:scale-95">
-                <Layers className="w-3.5 h-3.5 mr-1.5 text-indigo-600 dark:text-indigo-400" />
+              <label className="inline-flex items-center justify-center mt-4 px-4 py-2 bg-white dark:bg-[#3d2f2a] border border-[#DDD0C8] dark:border-[#5c4a40] hover:bg-[#faf8f6] dark:hover:bg-[#4A3830] text-[#323232] dark:text-[#DDD0C8] text-xs font-bold rounded-xl shadow-2xs cursor-pointer transition-all active:scale-95">
+                <Layers className="w-3.5 h-3.5 mr-1.5 text-[#6b5248] dark:text-[#cbb89f]" />
                 Select Multiple PDFs
                 <input
                   type="file"
