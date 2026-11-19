@@ -1,12 +1,14 @@
 """Reports router – JSON, PDF, and CSV report export."""
-from fastapi import APIRouter, Depends, HTTPException, Response
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.teacher import Teacher
 from app.models.student_submission import StudentSubmission
 from app.models.exam import Exam
-from app.services.auth_service import get_current_teacher
+from app.services.auth_service import get_current_teacher, get_teacher_from_token_str
 from app.services.report_service import (
     get_report_data,
     generate_submission_pdf,
@@ -15,6 +17,22 @@ from app.services.report_service import (
 )
 
 router = APIRouter(tags=["reports"])
+
+oauth2_optional = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
+
+
+def get_teacher_flexible(
+    token: Optional[str] = Query(None),
+    header_token: Optional[str] = Depends(oauth2_optional),
+    db: Session = Depends(get_db),
+) -> Teacher:
+    """Accepts auth token from Authorization header or ?token= query parameter."""
+    actual_token = header_token or token
+    if actual_token:
+        teacher = get_teacher_from_token_str(actual_token, db)
+        if teacher:
+            return teacher
+    raise HTTPException(status_code=401, detail="Authentication required to download report")
 
 
 @router.get("/submissions/{submission_id}/report")
@@ -33,7 +51,7 @@ def get_report_json(
 @router.get("/submissions/{submission_id}/report/pdf")
 def download_report_pdf(
     submission_id: int,
-    current_teacher: Teacher = Depends(get_current_teacher),
+    current_teacher: Teacher = Depends(get_teacher_flexible),
     db: Session = Depends(get_db),
 ):
     """Download ReportLab PDF report for this student."""

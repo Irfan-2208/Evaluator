@@ -77,8 +77,25 @@ export const studentService = {
     return res.data;
   },
 
+  async downloadReportPdf(submissionId, studentName = 'student') {
+    const res = await api.get(`/submissions/${submissionId}/report/pdf`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const safeName = (studentName || `student_${submissionId}`).replace(/[^a-zA-Z0-9_-]/g, '_');
+    link.download = `AI_Examiner_Report_${safeName}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
+
   getReportPdfUrl(submissionId) {
-    return `/api/submissions/${submissionId}/report/pdf`;
+    const token = localStorage.getItem('token');
+    return `/api/submissions/${submissionId}/report/pdf${token ? `?token=${encodeURIComponent(token)}` : ''}`;
   },
 
   getReportCsvUrl(submissionId) {

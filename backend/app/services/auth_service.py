@@ -29,6 +29,19 @@ def create_access_token(data: dict, expires_delta: Optional[datetime.timedelta] 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+def get_teacher_from_token_str(token: str, db: Session) -> Optional[Teacher]:
+    """Validate a token string directly and return the corresponding active teacher if valid."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        teacher_id: int = int(payload.get("sub", 0))
+        teacher = db.query(Teacher).filter(Teacher.id == teacher_id).first()
+        if teacher and teacher.is_active:
+            return teacher
+    except (JWTError, ValueError):
+        pass
+    return None
+
+
 def get_current_teacher(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),

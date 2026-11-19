@@ -4,16 +4,15 @@ import Layout from '../components/Layout';
 import { studentService } from '../services/studentService';
 import {
   Download,
-  Printer,
   ArrowLeft,
   Award,
   CheckCircle2,
   AlertTriangle,
   Lightbulb,
-  FileSpreadsheet,
   GraduationCap,
   Calendar,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -21,6 +20,7 @@ export default function ReportPage() {
   const { examId, submissionId } = useParams();
   const [reportData, setReportData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   useEffect(() => {
     async function loadReport() {
@@ -36,8 +36,18 @@ export default function ReportPage() {
     loadReport();
   }, [submissionId]);
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadPdf = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      toast.loading('Preparing official PDF report...', { id: 'pdf-dl' });
+      await studentService.downloadReportPdf(submissionId, reportData?.student?.name);
+      toast.success('Performance report downloaded as PDF!', { id: 'pdf-dl' });
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to download PDF report', { id: 'pdf-dl' });
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   if (isLoading) {
@@ -62,9 +72,6 @@ export default function ReportPage() {
   const { student, exam, performance, questions, strengths, weak_areas, overall_remark, improvement_suggestions } =
     reportData;
 
-  const pdfUrl = studentService.getReportPdfUrl(submissionId);
-  const csvUrl = studentService.getReportCsvUrl(submissionId);
-
   const gradeBadgeColors = {
     'A+': 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white',
     A: 'bg-gradient-to-br from-emerald-500 to-green-600 text-white',
@@ -77,7 +84,7 @@ export default function ReportPage() {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-8 w-full print:p-0 print:max-w-none animate-fadeIn space-y-6">
-        {/* Navigation and Action Bar */}
+        {/* Navigation and Action Bar (PDF Download Only) */}
         <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
           <Link
             to={`/exams/${examId}/students/${submissionId}/review`}
@@ -89,30 +96,19 @@ export default function ReportPage() {
 
           <div className="flex items-center space-x-3">
             <button
-              onClick={handlePrint}
-              className="inline-flex items-center px-3.5 py-2 bg-white dark:bg-[#252525] border border-[#DDD0C8] dark:border-charcoal-600 hover:bg-[#faf8f6] dark:hover:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] text-xs font-bold rounded-xl shadow-2xs transition-all active:scale-95"
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="inline-flex items-center px-4 py-2 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cfc0b6] text-white dark:text-[#323232] text-xs font-bold rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-60"
+              title="Download AI Examiner Performance Report strictly in PDF format"
             >
-              <Printer className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
-              Print Report
+              {isDownloadingPdf ? (
+                <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5 mr-1.5" />
+              )}
+              <span>{isDownloadingPdf ? 'Generating PDF...' : 'Download Report (PDF)'}</span>
             </button>
-
-            <a
-              href={csvUrl}
-              download
-              className="inline-flex items-center px-3.5 py-2 bg-white dark:bg-[#252525] border border-[#DDD0C8] dark:border-charcoal-600 hover:bg-[#faf8f6] dark:hover:bg-charcoal-700 text-[#323232] dark:text-[#DDD0C8] text-xs font-bold rounded-xl shadow-2xs transition-all active:scale-95"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
-              Export CSV
-            </a>
-
-            <a
-              href={pdfUrl}
-              download
-              className="inline-flex items-center px-4 py-2 bg-[#323232] hover:bg-[#1a1a1a] dark:bg-[#DDD0C8] dark:hover:bg-[#cfc0b6] text-white dark:text-[#323232] text-xs font-bold rounded-xl shadow-md transition-all active:scale-95"
-            >
-              <Download className="w-3.5 h-3.5 mr-1.5" />
-              Download Official PDF
-            </a>
           </div>
         </div>
 
