@@ -48,12 +48,12 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
   }
 
   return (
-    <div className="h-full min-h-0 flex flex-col bg-slate-200/60 dark:bg-slate-950 text-slate-800 dark:text-slate-200 select-none overflow-hidden transition-colors duration-200">
+    <div className="h-full min-h-0 flex flex-col bg-[#f0eae3]/60 dark:bg-charcoal-950 text-slate-800 dark:text-slate-200 select-none overflow-hidden transition-colors duration-200">
       {/* Top Toolbar — Fixed & Non-scrolling */}
-      <div className="h-11 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between flex-shrink-0 z-10 shadow-2xs transition-colors duration-200">
+      <div className="h-11 bg-white/95 dark:bg-[#252525]/95 border-b border-[#DDD0C8] dark:border-charcoal-700 px-4 flex items-center justify-between flex-shrink-0 z-10 shadow-2xs transition-colors duration-200">
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Answer Sheet</span>
-          <span className="text-[11px] font-bold px-2 py-0.5 bg-indigo-600 text-white rounded-md">
+          <span className="text-xs font-bold text-[#323232] dark:text-[#DDD0C8]">Answer Sheet</span>
+          <span className="text-[11px] font-black px-2.5 py-0.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-lg shadow-xs">
             Page {currentPage} of {images.length}
           </span>
           {showAnnotator && (
@@ -67,24 +67,24 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
         <div className="flex items-center space-x-1">
           <button
             onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}
-            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-charcoal-700 text-slate-600 dark:text-slate-300 transition-colors"
             title="Zoom Out (shortcut: -)"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
-          <span className="text-xs font-mono text-slate-600 dark:text-slate-400 min-w-[42px] text-center">
+          <span className="text-xs font-mono font-bold text-[#323232] dark:text-[#DDD0C8] min-w-[42px] text-center">
             {Math.round(scale * 100)}%
           </span>
           <button
             onClick={() => setScale((s) => Math.min(3.0, s + 0.2))}
-            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-charcoal-700 text-slate-600 dark:text-slate-300 transition-colors"
             title="Zoom In (shortcut: +)"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
           <button
             onClick={() => setScale(1)}
-            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors ml-1"
+            className="p-1.5 rounded-lg hover:bg-[#DDD0C8]/40 dark:hover:bg-charcoal-700 text-slate-600 dark:text-slate-300 transition-colors ml-1"
             title="Reset Zoom"
           >
             <RotateCcw className="w-4 h-4" />
@@ -95,7 +95,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
       {/* ── SEPARATE LEFT SCROLL CONTAINER ── */}
       <div
         ref={containerRef}
-        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar px-5 py-5 space-y-6 bg-slate-200/50 dark:bg-slate-950 transition-colors duration-200 relative"
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar px-5 py-5 space-y-6 bg-[#ede6df]/50 dark:bg-charcoal-950 transition-colors duration-200 relative"
       >
         {images.map((imgUrl, idx) => {
           const pageNum = idx + 1;
@@ -144,7 +144,7 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
 
       {/* ── BOTTOM THUMBNAIL QUICK-JUMP STRIP ── */}
       {images.length > 1 && (
-        <div className="h-[76px] bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center space-x-2.5 overflow-x-auto flex-shrink-0 z-10 custom-scrollbar transition-colors duration-200">
+        <div className="h-[76px] bg-white/95 dark:bg-[#252525]/95 border-t border-[#DDD0C8] dark:border-charcoal-700 px-3 py-1.5 flex items-center space-x-2.5 overflow-x-auto flex-shrink-0 z-10 custom-scrollbar transition-colors duration-200">
           {images.map((imgUrl, idx) => {
             const pageNum = idx + 1;
             const isSelected = currentPage === pageNum;
@@ -156,10 +156,10 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
                 }}
                 type="button"
                 onClick={() => onPageSelect?.(pageNum)}
-                className={`relative flex-shrink-0 h-14 w-11 rounded-lg border-2 overflow-hidden transition-all duration-150 cursor-pointer ${
+                className={`relative flex-shrink-0 h-14 w-11 rounded-xl border-2 overflow-hidden transition-all duration-150 cursor-pointer ${
                   isSelected
                     ? 'border-indigo-600 ring-2 ring-indigo-500/50 scale-105 shadow-md -translate-y-0.5'
-                    : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 opacity-70 hover:opacity-100'
+                    : 'border-[#DDD0C8] dark:border-charcoal-600 hover:border-slate-400 dark:hover:border-slate-500 opacity-75 hover:opacity-100'
                 }`}
                 title={`Jump to Page ${pageNum}`}
               >
@@ -172,10 +172,10 @@ function ScrollablePageStrip({ images, activePageRef, currentPage, containerRef,
                   }}
                 />
                 <span
-                  className={`absolute bottom-0 inset-x-0 text-[10px] font-bold py-0.5 text-center transition-colors ${
+                  className={`absolute bottom-0 inset-x-0 text-[10px] font-black py-0.5 text-center transition-colors ${
                     isSelected
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-800/85 text-slate-200'
+                      ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white'
+                      : 'bg-[#323232]/90 text-[#DDD0C8]'
                   }`}
                 >
                   {pageNum}
@@ -439,7 +439,7 @@ export default function ReviewPage() {
 
         {/* ── RIGHT 50%: Dedicated Scrollable Evaluation Cards ── */}
         <div
-          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col bg-slate-100 dark:bg-slate-950 overflow-hidden transition-colors duration-200 ${
+          className={`w-full md:w-1/2 h-full min-h-0 flex flex-col bg-[#f8f5f1] dark:bg-charcoal-900 border-l border-[#DDD0C8]/60 dark:border-charcoal-700 overflow-hidden transition-colors duration-200 ${
             mobileTab === 'evaluation' ? 'flex' : 'hidden md:flex'
           }`}
         >

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Edit2, Award, CheckCircle, Scale, ShieldAlert, Sparkles } from 'lucide-react';
+import { Check, Edit2, Award, CheckCircle, Scale, ShieldAlert, Sparkles, UserCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ScoreSummary({
@@ -26,17 +26,17 @@ export default function ScoreSummary({
     setIsEditingStudent(false);
   };
 
-  const gradeColors = {
-    'A+': 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
-    A: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-    B: 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-    C: 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-    D: 'bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800',
-    F: 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+  const gradeGradients = {
+    'A+': 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20',
+    A: 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-md shadow-emerald-500/20',
+    B: 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/20',
+    C: 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-500/20',
+    D: 'bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/20',
+    F: 'bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-md shadow-rose-500/20',
   };
 
   const statusColors = {
-    uploaded: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700',
+    uploaded: 'bg-slate-100 dark:bg-charcoal-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-charcoal-600',
     processing: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800',
     evaluated: 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800',
     reviewed: 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800',
@@ -69,118 +69,122 @@ export default function ScoreSummary({
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Student Details with inline edit */}
         <div className="flex items-center space-x-3">
+          {/* Avatar Icon */}
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/20 shrink-0">
+            {submission?.student_name ? submission.student_name.charAt(0).toUpperCase() : 'S'}
+          </div>
+
           {isEditingStudent ? (
-            <div className="flex items-center space-x-2 bg-[#faf8f6] dark:bg-charcoal-800 p-1.5 rounded-lg border border-[#DDD0C8] dark:border-charcoal-600">
+            <div className="flex items-center space-x-2 bg-[#faf8f6] dark:bg-charcoal-800 p-1.5 rounded-xl border border-[#DDD0C8] dark:border-charcoal-600">
               <input
                 type="text"
                 placeholder="Student Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="text-xs px-2 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded w-28 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
+                className="text-xs px-2.5 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded-lg w-28 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Roll No"
                 value={roll}
                 onChange={(e) => setRoll(e.target.value)}
-                className="text-xs px-2 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded w-20 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
+                className="text-xs px-2.5 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded-lg w-20 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Class"
                 value={className}
                 onChange={(e) => setClassName(e.target.value)}
-                className="text-xs px-2 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded w-16 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
+                className="text-xs px-2.5 py-1 border border-[#DDD0C8] dark:border-charcoal-600 rounded-lg w-20 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-100 focus:outline-none"
               />
               <button
                 onClick={handleSaveHeader}
-                className="p-1 bg-[#323232] dark:bg-[#DDD0C8] text-white dark:text-[#323232] rounded hover:opacity-90"
-                title="Save"
+                className="p-1.5 bg-[#323232] dark:bg-[#DDD0C8] text-white dark:text-[#323232] rounded-lg hover:opacity-90"
+                title="Save changes"
               >
                 <Check className="w-3.5 h-3.5" />
               </button>
             </div>
           ) : (
-            <div className="flex items-center space-x-2.5">
-              <div>
-                <div className="flex items-center space-x-1.5">
-                  <span className="font-bold text-sm text-[#323232] dark:text-white">
-                    {submission?.student_name || submission?.ai_detected_name || 'Student Name'}
-                  </span>
-                  <button
-                    onClick={() => {
-                      setName(submission?.student_name || '');
-                      setRoll(submission?.roll_number || '');
-                      setClassName(submission?.class_name || '');
-                      setIsEditingStudent(true);
-                    }}
-                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-                    title="Edit Student Info"
-                  >
-                    <Edit2 className="w-3 h-3" />
-                  </button>
-                </div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 space-x-2">
-                  <span>Roll: {submission?.roll_number || submission?.ai_detected_roll || '—'}</span>
-                  <span>•</span>
-                  <span>Class: {submission?.class_name || '—'}</span>
-                </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-extrabold text-sm text-[#323232] dark:text-white">
+                  {submission?.student_name || submission?.ai_detected_name || 'Student Name'}
+                </span>
+                <button
+                  onClick={() => {
+                    setName(submission?.student_name || '');
+                    setRoll(submission?.roll_number || '');
+                    setClassName(submission?.class_name || '');
+                    setIsEditingStudent(true);
+                  }}
+                  className="text-slate-400 hover:text-[#323232] dark:hover:text-white transition-colors"
+                  title="Edit Student Info"
+                >
+                  <Edit2 className="w-3 h-3" />
+                </button>
+
+                {/* Status Pill */}
+                <span
+                  className={`text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                    statusColors[status] || statusColors.uploaded
+                  }`}
+                >
+                  {status}
+                </span>
+
+                {/* Strictness Pill */}
+                <span
+                  className={`inline-flex items-center text-[9px] font-bold px-2 py-0.5 rounded-full border ${strictCfg.color}`}
+                  title={`Grading Strictness: ${strictCfg.label}`}
+                >
+                  <StrictIcon className="w-2.5 h-2.5 mr-1" />
+                  {strictCfg.label}
+                </span>
               </div>
 
-              {/* Status Chip */}
-              <span
-                className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                  statusColors[status] || statusColors.uploaded
-                }`}
-              >
-                {status}
-              </span>
-
-              {/* Strictness Badge */}
-              <span
-                className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full border ${strictCfg.color}`}
-                title={`Evaluated with ${strictCfg.label} Strictness`}
-              >
-                <StrictIcon className="w-3 h-3 mr-1" />
-                {strictCfg.label}
-              </span>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 space-x-2 mt-0.5">
+                <span>Roll: <strong className="text-[#323232] dark:text-slate-300">{submission?.roll_number || submission?.ai_detected_roll || '—'}</strong></span>
+                <span>•</span>
+                <span>Class: <strong className="text-[#323232] dark:text-slate-300">{submission?.class_name || '—'}</strong></span>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Live Score Counter & Actions */}
+        {/* Live Score Counter & Finalize Button */}
         <div className="flex items-center space-x-4">
           <div className="text-right">
             <div className="flex items-baseline space-x-1.5 justify-end">
-              <span className="font-extrabold text-lg text-[#323232] dark:text-white tracking-tight">
+              <span className="font-black text-xl text-[#323232] dark:text-white tracking-tight">
                 {totalAwarded}
               </span>
-              <span className="text-xs font-semibold text-slate-400">/ {maxTotal}</span>
-              <span className="text-xs font-bold text-[#323232] dark:text-[#DDD0C8] ml-1">
+              <span className="text-xs font-bold text-slate-400">/ {maxTotal}</span>
+              <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 ml-1">
                 ({percentage}%)
               </span>
             </div>
 
-            {/* Micro progress bar */}
-            <div className="w-32 bg-[#f4efe9] dark:bg-charcoal-800 rounded-full h-1.5 overflow-hidden ml-auto mt-0.5">
+            {/* Vibrant progress bar */}
+            <div className="w-32 bg-[#f4efe9] dark:bg-charcoal-800 rounded-full h-2 overflow-hidden ml-auto mt-1 border border-[#DDD0C8]/50 dark:border-charcoal-700">
               <div
-                className="bg-[#323232] dark:bg-[#DDD0C8] h-1.5 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500 h-full rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, percentage)}%` }}
               />
             </div>
           </div>
 
-          {/* Grade Badge */}
+          {/* Vibrant Grade Badge */}
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm border shadow-2xs ${
-              gradeColors[grade] || gradeColors.F
+            className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-base border border-white/20 ${
+              gradeGradients[grade] || gradeGradients.F
             }`}
             title={`Grade: ${grade}`}
           >
             {grade}
           </div>
 
-          {/* Approve & Finalize / View Report Button */}
+          {/* Action Button: View Report Card or Approve & Finalize */}
           {isFinalized ? (
             <button
               onClick={() =>
@@ -188,18 +192,18 @@ export default function ScoreSummary({
                   `/exams/${submission.exam_id}/students/${submission.id}/report`
                 )
               }
-              className="inline-flex items-center px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all duration-200 active:scale-95"
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold rounded-xl shadow-md transition-all duration-200 active:scale-95"
             >
-              <Award className="w-3.5 h-3.5 mr-1" />
+              <Award className="w-4 h-4 mr-1.5" />
               View Report Card
             </button>
           ) : (
             <button
               onClick={onFinalize}
               disabled={isSaving}
-              className="inline-flex items-center px-3 py-1.5 bg-[#323232] hover:bg-[#1f1f1f] dark:bg-[#DDD0C8] dark:hover:bg-[#cbb89f] text-white dark:text-[#323232] text-xs font-semibold rounded-lg shadow-sm disabled:opacity-50 transition-all duration-200 active:scale-95"
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#323232] to-[#4c4c4c] dark:from-[#DDD0C8] dark:to-[#cbb89f] text-white dark:text-[#323232] text-xs font-bold rounded-xl shadow-md disabled:opacity-50 transition-all duration-200 active:scale-95"
             >
-              <CheckCircle className="w-3.5 h-3.5 mr-1" />
+              <CheckCircle className="w-4 h-4 mr-1.5" />
               {isSaving ? 'Finalizing...' : 'Approve & Finalize'}
             </button>
           )}
