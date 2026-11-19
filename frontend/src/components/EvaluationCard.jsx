@@ -21,9 +21,6 @@ import {
   Scale,
   Award,
   ArrowRight,
-  Split,
-  LayoutGrid,
-  Lightbulb,
 } from 'lucide-react';
 
 // ── Score Circular Arc Gauge ──────────────────────────────────────────────────
@@ -101,7 +98,6 @@ export default function EvaluationCard({
   const [marks, setMarks] = useState(evaluation.final_marks ?? evaluation.ai_marks ?? 0);
   const [comment, setComment] = useState(evaluation.teacher_comment || '');
   const [showComment, setShowComment] = useState(false);
-  const [viewTab, setViewTab] = useState('bento'); // 'bento' | 'compare' | 'rubric'
   const [collapsed, setCollapsed] = useState(false);
   const commentRef = useRef(null);
 
@@ -261,56 +257,37 @@ export default function EvaluationCard({
           </div>
         </div>
 
-        {/* Confidence bar & Quick View Switcher Row */}
+        {/* Confidence & Status Row (Clean & Unified, No Tab Buttons) */}
         <div className="mt-3 pt-2.5 border-t border-[#DDD0C8]/50 dark:border-charcoal-700 flex flex-wrap items-center justify-between gap-3">
           {/* AI Confidence Indicator */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
               AI Confidence: <span className="text-[#323232] dark:text-white font-extrabold">{Math.round(confidence * 100)}%</span>
             </span>
+            <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+              confidence >= 0.85
+                ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                : confidence >= 0.6
+                ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
+                : 'bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800'
+            }`}>
+              {confidence >= 0.85 ? 'High Confidence' : confidence >= 0.6 ? 'Moderate' : 'Review Needed'}
+            </span>
           </div>
 
-          {/* CREATIVE VIEW SWITCHER (NO DROPDOWNS!) */}
-          <div className="inline-flex items-center p-0.5 rounded-xl bg-[#DDD0C8]/40 dark:bg-charcoal-800 border border-[#DDD0C8]/60 dark:border-charcoal-600">
-            <button
-              type="button"
-              onClick={() => setViewTab('bento')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                viewTab === 'bento'
-                  ? 'bg-white dark:bg-charcoal-700 text-[#323232] dark:text-white shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'
-              }`}
-            >
-              <LayoutGrid className="w-3.5 h-3.5 text-indigo-500" />
-              <span>Evaluation Bento</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setViewTab('compare')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                viewTab === 'compare'
-                  ? 'bg-white dark:bg-charcoal-700 text-[#323232] dark:text-white shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'
-              }`}
-            >
-              <Split className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Side-by-Side</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setViewTab('rubric')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                viewTab === 'rubric'
-                  ? 'bg-white dark:bg-charcoal-700 text-[#323232] dark:text-white shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'
-              }`}
-            >
-              <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-              <span>Model & Key</span>
-            </button>
+          {/* Status Badges */}
+          <div className="flex items-center space-x-2">
+            {isOverridden && (
+              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
+                Teacher Modified
+              </span>
+            )}
+            {isFlagged && (
+              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+                Flagged
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -331,175 +308,144 @@ export default function EvaluationCard({
             </div>
           )}
 
-          {/* ── VIEW TAB 1: EVALUATION BENTO (NO DROPDOWNS!) ── */}
-          {viewTab === 'bento' && (
-            <div className="space-y-3.5 animate-fadeIn">
-              {/* Student Answer Card (Clean Transcript style) */}
-              <div className="rounded-2xl p-4 bg-[#faf8f5] dark:bg-charcoal-800/60 border border-[#DDD0C8] dark:border-charcoal-600 relative">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                      Student's Written Response
-                    </span>
+          {/* 2. Expected Key Points & Rubric (Clean Reference Card) */}
+          {(modelAnswer || keyPoints.length > 0) && (
+            <div className="rounded-2xl p-3.5 bg-[#DDD0C8]/25 dark:bg-charcoal-800/70 border border-[#DDD0C8] dark:border-charcoal-600">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 rounded-md bg-[#323232] dark:bg-[#DDD0C8] text-[#DDD0C8] dark:text-[#323232] flex items-center justify-center">
+                    <BookOpen className="w-3 h-3" />
                   </div>
-                  <CopyBtn text={evaluation.transcribed_answer} />
-                </div>
-                <div className="font-mono text-xs text-[#323232] dark:text-slate-200 bg-white dark:bg-charcoal-900 p-3.5 rounded-xl border border-[#DDD0C8]/60 dark:border-charcoal-700 leading-relaxed whitespace-pre-wrap max-h-40 overflow-y-auto custom-scrollbar">
-                  {evaluation.transcribed_answer || (
-                    <span className="italic text-slate-400">No student response detected or blank answer</span>
-                  )}
-                </div>
-              </div>
-
-              {/* 2-Column Bento Tiles: Points Matched (Green) vs Missing Points (Rose) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Points Matched Card */}
-                <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-50/90 via-emerald-50/40 to-white dark:from-emerald-950/40 dark:via-charcoal-800 dark:to-charcoal-800 border border-emerald-200 dark:border-emerald-800/60 shadow-2xs">
-                  <div className="flex items-center justify-between mb-2.5">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-xs font-black text-emerald-900 dark:text-emerald-200">
-                        Points Matched
-                      </span>
-                    </div>
-                    <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-emerald-600 text-white">
-                      {matchedPts.length}
-                    </span>
-                  </div>
-
-                  {matchedPts.length > 0 ? (
-                    <div className="space-y-1.5">
-                      {matchedPts.map((pt, i) => (
-                        <div key={i} className="flex items-start space-x-2 text-xs text-emerald-950 dark:text-emerald-200 bg-white/80 dark:bg-charcoal-900/60 p-2 rounded-xl border border-emerald-100 dark:border-emerald-900/40">
-                          <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                          <span className="leading-snug">{pt}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs italic text-emerald-700/70 dark:text-emerald-400/70 py-2">
-                      No matching rubric points identified.
-                    </p>
-                  )}
-                </div>
-
-                {/* Points Missed Card */}
-                <div className="rounded-2xl p-4 bg-gradient-to-br from-rose-50/90 via-rose-50/40 to-white dark:from-rose-950/40 dark:via-charcoal-800 dark:to-charcoal-800 border border-rose-200 dark:border-rose-800/60 shadow-2xs">
-                  <div className="flex items-center justify-between mb-2.5">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 rounded-lg bg-rose-100 dark:bg-rose-900/60 flex items-center justify-center text-rose-700 dark:text-rose-300">
-                        <XCircle className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-xs font-black text-rose-900 dark:text-rose-200">
-                        Missing Points
-                      </span>
-                    </div>
-                    <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-rose-600 text-white">
-                      {missedPts.length}
-                    </span>
-                  </div>
-
-                  {missedPts.length > 0 ? (
-                    <div className="space-y-1.5">
-                      {missedPts.map((pt, i) => (
-                        <div key={i} className="flex items-start space-x-2 text-xs text-rose-950 dark:text-rose-200 bg-white/80 dark:bg-charcoal-900/60 p-2 rounded-xl border border-rose-100 dark:border-rose-900/40">
-                          <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
-                          <span className="leading-snug">{pt}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs italic text-rose-600/70 dark:text-rose-400/70 py-2">
-                      Excellent! No required key points missed.
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* AI Examiner Feedback Card (Lavender/Purple Gradient) */}
-              {evaluation.feedback && (
-                <div className="rounded-2xl p-4 bg-gradient-to-r from-violet-50/90 via-purple-50/50 to-indigo-50/50 dark:from-purple-950/40 dark:via-charcoal-800 dark:to-charcoal-800 border border-purple-200 dark:border-purple-800/60 shadow-2xs">
-                  <div className="flex items-center space-x-2 mb-1.5">
-                    <div className="w-5 h-5 rounded-md bg-purple-100 dark:bg-purple-900/70 flex items-center justify-center text-purple-700 dark:text-purple-300">
-                      <Sparkles className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-xs font-black text-purple-900 dark:text-purple-200 uppercase tracking-wide">
-                      AI Examiner Evaluation Notes
-                    </span>
-                  </div>
-                  <p className="text-xs text-purple-950 dark:text-slate-200 leading-relaxed pl-7">
-                    {evaluation.feedback}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── VIEW TAB 2: SIDE-BY-SIDE COMPARISON ── */}
-          {viewTab === 'compare' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn">
-              {/* Left Column: Student Answer */}
-              <div className="rounded-2xl p-4 bg-[#faf8f5] dark:bg-charcoal-800 border border-[#DDD0C8] dark:border-charcoal-600">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
-                    <span>Student Wrote</span>
+                  <span className="text-[11px] font-black uppercase tracking-wider text-[#323232] dark:text-[#DDD0C8]">
+                    Expected Key Points & Rubric
                   </span>
-                  <CopyBtn text={evaluation.transcribed_answer} />
                 </div>
-                <div className="font-mono text-xs text-[#323232] dark:text-slate-200 bg-white dark:bg-charcoal-900 p-3 rounded-xl border border-slate-200 dark:border-charcoal-700 min-h-[120px] whitespace-pre-wrap">
-                  {evaluation.transcribed_answer || 'No answer recorded'}
-                </div>
+                {modelAnswer && <CopyBtn text={modelAnswer} />}
               </div>
 
-              {/* Right Column: Model / Expected Answer */}
-              <div className="rounded-2xl p-4 bg-amber-50/50 dark:bg-charcoal-800 border border-amber-200 dark:border-amber-800/60">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center space-x-1.5">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span>Expected Model Answer</span>
-                  </span>
-                  <CopyBtn text={modelAnswer} />
-                </div>
-                <div className="text-xs text-amber-950 dark:text-slate-200 bg-white dark:bg-charcoal-900 p-3 rounded-xl border border-amber-200/80 dark:border-charcoal-700 min-h-[120px] leading-relaxed">
-                  {modelAnswer || 'No specific model answer provided for this question'}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── VIEW TAB 3: FULL RUBRIC & KEY POINTS ── */}
-          {viewTab === 'rubric' && (
-            <div className="rounded-2xl p-4 bg-gradient-to-r from-amber-50/70 to-orange-50/50 dark:from-charcoal-800 dark:to-charcoal-800 border border-amber-200 dark:border-charcoal-600 space-y-3 animate-fadeIn">
-              <div>
-                <span className="text-[11px] font-black uppercase text-amber-800 dark:text-amber-300 tracking-wider block mb-1">
-                  Expected Solution Rubric
-                </span>
-                <p className="text-xs text-[#323232] dark:text-slate-200 leading-relaxed bg-white/80 dark:bg-charcoal-900 p-3 rounded-xl border border-amber-200 dark:border-charcoal-700">
-                  {modelAnswer || 'Standard evaluation rubric applied'}
+              {modelAnswer && (
+                <p className="text-xs text-[#323232] dark:text-slate-200 bg-white/90 dark:bg-charcoal-900/80 p-3 rounded-xl border border-[#DDD0C8]/60 dark:border-charcoal-700 leading-relaxed">
+                  {modelAnswer}
                 </p>
-              </div>
+              )}
 
               {keyPoints.length > 0 && (
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase text-amber-800 dark:text-amber-400 tracking-wider block mb-1.5">
-                    Key Evaluation Concepts
+                <div className="mt-2.5 flex flex-wrap gap-1.5 items-center">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mr-1">
+                    Concepts:
                   </span>
-                  <div className="flex flex-wrap gap-2">
-                    {keyPoints.map((kp, i) => (
-                      <span
-                        key={i}
-                        className="text-xs font-bold px-3 py-1 bg-white dark:bg-charcoal-900 text-[#323232] dark:text-amber-200 rounded-xl border border-amber-200 dark:border-charcoal-700 shadow-2xs"
-                      >
-                        ✓ {kp}
-                      </span>
-                    ))}
-                  </div>
+                  {keyPoints.map((kp, i) => (
+                    <span
+                      key={i}
+                      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-lg bg-white dark:bg-charcoal-900 text-[#323232] dark:text-slate-200 border border-[#DDD0C8]/70 dark:border-charcoal-700"
+                    >
+                      {kp}
+                    </span>
+                  ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 3. Student Answer Card (Clean Transcript style) */}
+          <div className="rounded-2xl p-4 bg-[#faf8f5] dark:bg-charcoal-800/60 border border-[#DDD0C8] dark:border-charcoal-600 relative">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Student's Written Response
+                </span>
+              </div>
+              <CopyBtn text={evaluation.transcribed_answer} />
+            </div>
+            <div className="font-mono text-xs text-[#323232] dark:text-slate-200 bg-white dark:bg-charcoal-900 p-3.5 rounded-xl border border-[#DDD0C8]/60 dark:border-charcoal-700 leading-relaxed whitespace-pre-wrap max-h-40 overflow-y-auto custom-scrollbar">
+              {evaluation.transcribed_answer || (
+                <span className="italic text-slate-400">No student response detected or blank answer</span>
+              )}
+            </div>
+          </div>
+
+          {/* 4. 2-Column Bento Tiles: Points Matched (Green) vs Missing Points (Rose) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* Points Matched Card */}
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-50/90 via-emerald-50/40 to-white dark:from-emerald-950/40 dark:via-charcoal-800 dark:to-charcoal-800 border border-emerald-200 dark:border-emerald-800/60 shadow-2xs">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs font-black text-emerald-900 dark:text-emerald-200">
+                    Points Matched
+                  </span>
+                </div>
+                <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-emerald-600 text-white">
+                  {matchedPts.length}
+                </span>
+              </div>
+
+              {matchedPts.length > 0 ? (
+                <div className="space-y-1.5">
+                  {matchedPts.map((pt, i) => (
+                    <div key={i} className="flex items-start space-x-2 text-xs text-emerald-950 dark:text-emerald-200 bg-white/80 dark:bg-charcoal-900/60 p-2 rounded-xl border border-emerald-100 dark:border-emerald-900/40">
+                      <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      <span className="leading-snug">{pt}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs italic text-emerald-700/70 dark:text-emerald-400/70 py-2">
+                  No matching rubric points identified.
+                </p>
+              )}
+            </div>
+
+            {/* Points Missed Card */}
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-rose-50/90 via-rose-50/40 to-white dark:from-rose-950/40 dark:via-charcoal-800 dark:to-charcoal-800 border border-rose-200 dark:border-rose-800/60 shadow-2xs">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 rounded-lg bg-rose-100 dark:bg-rose-900/60 flex items-center justify-center text-rose-700 dark:text-rose-300">
+                    <XCircle className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs font-black text-rose-900 dark:text-rose-200">
+                    Missing Points
+                  </span>
+                </div>
+                <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-rose-600 text-white">
+                  {missedPts.length}
+                </span>
+              </div>
+
+              {missedPts.length > 0 ? (
+                <div className="space-y-1.5">
+                  {missedPts.map((pt, i) => (
+                    <div key={i} className="flex items-start space-x-2 text-xs text-rose-950 dark:text-rose-200 bg-white/80 dark:bg-charcoal-900/60 p-2 rounded-xl border border-rose-100 dark:border-rose-900/40">
+                      <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
+                      <span className="leading-snug">{pt}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs italic text-rose-600/70 dark:text-rose-400/70 py-2">
+                  Excellent! No required key points missed.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* 5. AI Examiner Feedback Card (Lavender/Purple Gradient) */}
+          {evaluation.feedback && (
+            <div className="rounded-2xl p-4 bg-gradient-to-r from-violet-50/90 via-purple-50/50 to-indigo-50/50 dark:from-purple-950/40 dark:via-charcoal-800 dark:to-charcoal-800 border border-purple-200 dark:border-purple-800/60 shadow-2xs">
+              <div className="flex items-center space-x-2 mb-1.5">
+                <div className="w-5 h-5 rounded-md bg-purple-100 dark:bg-purple-900/70 flex items-center justify-center text-purple-700 dark:text-purple-300">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-xs font-black text-purple-900 dark:text-purple-200 uppercase tracking-wide">
+                  AI Examiner Evaluation Notes
+                </span>
+              </div>
+              <p className="text-xs text-purple-950 dark:text-slate-200 leading-relaxed pl-7">
+                {evaluation.feedback}
+              </p>
             </div>
           )}
 
