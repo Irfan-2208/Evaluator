@@ -132,183 +132,368 @@ def get_report_data(db: Session, submission_id: int) -> Dict[str, Any]:
 
 
 def generate_submission_pdf(db: Session, submission_id: int) -> bytes:
-    """Generate professional PDF student evaluation report using ReportLab."""
+    """Generate colourful, branded PDF student evaluation report using ReportLab."""
+    from reportlab.platypus import FrameBreak
+    from reportlab.lib.units import mm
+
     data = get_report_data(db, submission_id)
     buffer = io.BytesIO()
+
+    # ── Palette ──────────────────────────────────────────────────────────────
+    CHARCOAL   = colors.HexColor("#323232")
+    BEIGE      = colors.HexColor("#DDD0C8")
+    BEIGE_LIGHT= colors.HexColor("#f5ede6")
+    BEIGE_MID  = colors.HexColor("#e8d9cc")
+    BROWN_DARK = colors.HexColor("#4A3830")
+    BROWN_MED  = colors.HexColor("#6b5248")
+    AMBER      = colors.HexColor("#d97706")
+    AMBER_LIGHT= colors.HexColor("#fef3c7")
+    AMBER_MED  = colors.HexColor("#fde68a")
+    EMERALD    = colors.HexColor("#059669")
+    EMERALD_LIGHT = colors.HexColor("#d1fae5")
+    ROSE       = colors.HexColor("#e11d48")
+    ROSE_LIGHT = colors.HexColor("#ffe4e6")
+    INDIGO     = colors.HexColor("#4f46e5")
+    INDIGO_LIGHT = colors.HexColor("#e0e7ff")
+    WHITE      = colors.white
+    SLATE      = colors.HexColor("#64748b")
+
+    # Grade colours
+    grade_colors = {
+        "A+": (colors.HexColor("#059669"), colors.HexColor("#d1fae5")),
+        "A":  (colors.HexColor("#16a34a"), colors.HexColor("#dcfce7")),
+        "B":  (colors.HexColor("#2563eb"), colors.HexColor("#dbeafe")),
+        "C":  (colors.HexColor("#d97706"), colors.HexColor("#fef3c7")),
+        "D":  (colors.HexColor("#ea580c"), colors.HexColor("#ffedd5")),
+        "F":  (colors.HexColor("#dc2626"), colors.HexColor("#fee2e2")),
+    }
 
     doc = SimpleDocTemplate(
         buffer,
         pagesize=letter,
-        rightMargin=36,
-        leftMargin=36,
-        topMargin=36,
-        bottomMargin=36,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40,
     )
 
+    W = letter[0] - 80  # usable width
+
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        "DocTitle",
-        parent=styles["Heading1"],
-        fontSize=20,
-        leading=24,
-        textColor=colors.HexColor("#323232"),
-        spaceAfter=4,
-    )
-    subtitle_style = ParagraphStyle(
-        "DocSubtitle",
-        parent=styles["Normal"],
-        fontSize=10,
-        leading=14,
-        textColor=colors.HexColor("#5c5c5c"),
-        spaceAfter=12,
-    )
-    heading2_style = ParagraphStyle(
-        "DocHeading2",
-        parent=styles["Heading2"],
-        fontSize=13,
-        leading=16,
-        textColor=colors.HexColor("#323232"),
-        spaceBefore=10,
-        spaceAfter=6,
-    )
-    normal_style = ParagraphStyle(
-        "DocNormal",
-        parent=styles["Normal"],
-        fontSize=9,
-        leading=12,
-        textColor=colors.HexColor("#323232"),
-    )
-    bold_style = ParagraphStyle(
-        "DocBold",
-        parent=styles["Normal"],
-        fontSize=9,
-        leading=12,
-        fontName="Helvetica-Bold",
-        textColor=colors.HexColor("#323232"),
-    )
+
+    def ps(name, **kw):
+        return ParagraphStyle(name, parent=styles["Normal"], **kw)
+
+    # ── Styles ───────────────────────────────────────────────────────────────
+    title_st = ps("T", fontSize=22, leading=27, fontName="Helvetica-Bold",
+                  textColor=WHITE, spaceAfter=2)
+    sub_st   = ps("S", fontSize=9,  leading=13, textColor=colors.HexColor("#DDD0C8"), spaceAfter=0)
+    h2_st    = ps("H2", fontSize=11, leading=14, fontName="Helvetica-Bold",
+                  textColor=CHARCOAL, spaceBefore=14, spaceAfter=5)
+    h2w_st   = ps("H2W", fontSize=11, leading=14, fontName="Helvetica-Bold",
+                  textColor=WHITE, spaceBefore=0, spaceAfter=0)
+    norm_st  = ps("N", fontSize=8.5, leading=12, textColor=CHARCOAL)
+    norm_w   = ps("NW", fontSize=8.5, leading=12, textColor=WHITE)
+    bold_st  = ps("B", fontSize=8.5, leading=12, fontName="Helvetica-Bold", textColor=CHARCOAL)
+    bold_w   = ps("BW", fontSize=8.5, leading=12, fontName="Helvetica-Bold", textColor=WHITE)
+    tiny_st  = ps("TN", fontSize=7.5, leading=11, textColor=SLATE)
+    tiny_w   = ps("TNW", fontSize=7.5, leading=11, textColor=BEIGE)
+    em_st    = ps("EM", fontSize=8.5, leading=12, textColor=EMERALD, fontName="Helvetica-Bold")
+    rose_st  = ps("RS", fontSize=8.5, leading=12, textColor=ROSE, fontName="Helvetica-Bold")
+    amber_st = ps("AM", fontSize=8.5, leading=12, textColor=AMBER, fontName="Helvetica-Bold")
+
+    perf    = data["performance"]
+    student = data["student"]
+    exam    = data["exam"]
+    grade   = perf["grade"]
+    grade_fg, grade_bg = grade_colors.get(grade, (CHARCOAL, BEIGE_LIGHT))
 
     elements = []
 
-    # Header
-    elements.append(Paragraph("AI Examiner – Performance Report", title_style))
-    elements.append(Paragraph(f"Official Automated Academic Assessment & Feedback", subtitle_style))
-    elements.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#323232"), spaceAfter=12))
+    # ════════════════════════════════════════════════════════════════════════
+    # 1. HEADER BANNER  (dark charcoal background, beige text)
+    # ════════════════════════════════════════════════════════════════════════
+    banner_data = [[
+        Paragraph("🎓  AI Examiner – Performance Report", title_st),
+        Paragraph("Official Automated Academic Assessment &amp; Teacher-Verified Evaluation", sub_st),
+    ]]
+    banner = Table(banner_data, colWidths=[W])
+    banner.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), CHARCOAL),
+        ("TOPPADDING",    (0, 0), (-1, -1), 18),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 18),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 20),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 20),
+        ("ROUNDEDCORNERS",(0, 0), (-1, -1), [8, 8, 0, 0]),
+    ]))
+    elements.append(banner)
 
-    # Student & Exam Info Table
-    perf = data["performance"]
-    student = data["student"]
-    exam = data["exam"]
+    # ── Coloured sub-banner with score + grade ───────────────────────────────
+    score_text = (
+        f"<b>{perf['total_marks']} / {perf['max_marks']}</b>"
+        f"  ·  <b>{perf['percentage']}%</b>  ·  Rank #{perf['rank']}"
+    )
+    sub_banner_data = [[
+        Paragraph(score_text, ps("SB", fontSize=13, leading=17, fontName="Helvetica-Bold",
+                                 textColor=WHITE)),
+        Paragraph(
+            f"<b>GRADE  {grade}</b>",
+            ps("GB", fontSize=16, leading=20, fontName="Helvetica-Bold",
+               textColor=grade_fg, alignment=2)
+        ),
+    ]]
+    sub_banner = Table(sub_banner_data, colWidths=[W * 0.70, W * 0.30])
+    sub_banner.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), BROWN_DARK),
+        ("BACKGROUND",    (1, 0), (1, 0),   grade_bg),
+        ("TOPPADDING",    (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 20),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 20),
+        ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    elements.append(sub_banner)
+    elements.append(Spacer(1, 14))
+
+    # ════════════════════════════════════════════════════════════════════════
+    # 2. STUDENT & EXAM INFO  (2-column coloured grid)
+    # ════════════════════════════════════════════════════════════════════════
+    CW = W / 4
+
+    def label(txt):
+        return Paragraph(txt, ps("LB", fontSize=7, fontName="Helvetica-Bold",
+                                  textColor=BROWN_MED, spaceAfter=1))
+    def val(txt):
+        return Paragraph(str(txt), ps("VL", fontSize=9, fontName="Helvetica-Bold",
+                                       textColor=CHARCOAL))
 
     info_data = [
-        [
-            Paragraph("<b>Student Name:</b>", normal_style),
-            Paragraph(student["name"], bold_style),
-            Paragraph("<b>Exam Title:</b>", normal_style),
-            Paragraph(exam["title"], bold_style),
-        ],
-        [
-            Paragraph("<b>Roll / ID:</b>", normal_style),
-            Paragraph(student["roll_number"], normal_style),
-            Paragraph("<b>Subject:</b>", normal_style),
-            Paragraph(exam["subject"] or "N/A", normal_style),
-        ],
-        [
-            Paragraph("<b>Class / Grade:</b>", normal_style),
-            Paragraph(student["class_name"], normal_style),
-            Paragraph("<b>Class Rank:</b>", normal_style),
-            Paragraph(f"#{perf['rank']}", bold_style),
-        ],
-        [
-            Paragraph("<b>Total Score:</b>", normal_style),
-            Paragraph(f"<b>{perf['total_marks']} / {perf['max_marks']}</b> ({perf['percentage']}%)", bold_style),
-            Paragraph("<b>Final Grade:</b>", normal_style),
-            Paragraph(f"<b>{perf['grade']}</b>", bold_style),
-        ],
+        [label("STUDENT NAME"), label("ROLL / ID"), label("CLASS / SECTION"), label("SUBJECT")],
+        [val(student["name"]), val(student["roll_number"]), val(student["class_name"]),
+         val(exam["subject"] or exam["title"] or "N/A")],
     ]
-
-    info_table = Table(info_data, colWidths=[90, 180, 90, 180])
-    info_table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f7f4f0")),
-        ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#DDD0C8")),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#DDD0C8")),
-        ("TOPPADDING", (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-        ("LEFTPADDING", (0, 0), (-1, -1), 8),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+    info_tbl = Table(info_data, colWidths=[CW] * 4)
+    info_tbl.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), BEIGE_LIGHT),
+        ("BACKGROUND",    (0, 0), (-1, 0),  BEIGE_MID),
+        ("BOX",           (0, 0), (-1, -1), 1.2, BEIGE),
+        ("INNERGRID",     (0, 0), (-1, -1), 0.5, BEIGE),
+        ("TOPPADDING",    (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 10),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 10),
+        ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
     ]))
-    elements.append(info_table)
-    elements.append(Spacer(1, 14))
+    elements.append(info_tbl)
+    elements.append(Spacer(1, 16))
 
-    # Question-wise Breakdown
-    elements.append(Paragraph("Question-Wise Evaluation Breakdown", heading2_style))
+    # ════════════════════════════════════════════════════════════════════════
+    # 3. QUESTION-WISE EVALUATION TABLE
+    # ════════════════════════════════════════════════════════════════════════
+    # Section header pill
+    sec_hdr = Table([[Paragraph("📋  Question-Wise Evaluation Breakdown", h2w_st)]],
+                    colWidths=[W])
+    sec_hdr.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), BROWN_DARK),
+        ("TOPPADDING",    (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 14),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 14),
+        ("ROUNDEDCORNERS",(0, 0), (-1, -1), [6, 6, 0, 0]),
+    ]))
+    elements.append(sec_hdr)
 
-    q_table_data = [
-        [
-            Paragraph("<b>Q#</b>", normal_style),
-            Paragraph("<b>Question</b>", normal_style),
-            Paragraph("<b>Max</b>", normal_style),
-            Paragraph("<b>AI Marks</b>", normal_style),
-            Paragraph("<b>Final Marks</b>", normal_style),
-            Paragraph("<b>Feedback</b>", normal_style),
-        ]
+    q_header = [
+        Paragraph("<b>Q#</b>", bold_st),
+        Paragraph("<b>Question Text</b>", bold_st),
+        Paragraph("<b>Max</b>", bold_st),
+        Paragraph("<b>AI</b>", bold_st),
+        Paragraph("<b>Final</b>", bold_st),
+        Paragraph("<b>AI Feedback</b>", bold_st),
     ]
 
+    q_rows = [q_header]
     for q in data["questions"]:
-        override_mark = " (Overridden)" if q["is_overridden"] else ""
-        marks_display = f"{q['final_marks']}{override_mark}"
-        q_table_data.append([
-            Paragraph(str(q["question_no"]), normal_style),
-            Paragraph(q["question_text"][:80] + ("..." if len(q["question_text"]) > 80 else ""), normal_style),
-            Paragraph(str(q["max_marks"]), normal_style),
-            Paragraph(str(q["ai_marks"]), normal_style),
-            Paragraph(marks_display, bold_style if q["is_overridden"] else normal_style),
-            Paragraph(q["feedback"][:120] + ("..." if len(q["feedback"]) > 120 else ""), normal_style),
+        override_note = Paragraph(
+            "<font color='#d97706'><b>(Teacher Adj.)</b></font>", norm_st
+        ) if q["is_overridden"] else Paragraph("", norm_st)
+
+        final_cell = [
+            Paragraph(f"<b>{q['final_marks']}</b>", bold_st),
+            override_note,
+        ]
+
+        q_rows.append([
+            Paragraph(f"<b>{q['question_no']}</b>", bold_st),
+            Paragraph(q["question_text"][:90] + ("…" if len(q["question_text"]) > 90 else ""), norm_st),
+            Paragraph(str(q["max_marks"]), norm_st),
+            Paragraph(str(q["ai_marks"]), norm_st),
+            final_cell,
+            Paragraph(q["feedback"][:130] + ("…" if len(q["feedback"]) > 130 else ""), tiny_st),
         ])
 
-    q_table = Table(q_table_data, colWidths=[35, 145, 35, 45, 60, 220])
-    q_table_style = [
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#DDD0C8")),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#DDD0C8")),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("LEFTPADDING", (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+    q_tbl = Table(q_rows, colWidths=[28, 155, 28, 32, 55, W - 28 - 155 - 28 - 32 - 55])
+    q_style = [
+        ("BACKGROUND",    (0, 0), (-1, 0),  BEIGE),
+        ("TEXTCOLOR",     (0, 0), (-1, 0),  CHARCOAL),
+        ("GRID",          (0, 0), (-1, -1), 0.5, BEIGE),
+        ("BOX",           (0, 0), (-1, -1), 1,   BEIGE),
+        ("TOPPADDING",    (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 6),
+        ("VALIGN",        (0, 0), (-1, -1), "TOP"),
+        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [WHITE, BEIGE_LIGHT]),
     ]
-
-    # Highlight overridden rows in subtle amber/beige
+    # Highlight teacher-overridden rows amber
     for r_idx, q in enumerate(data["questions"], start=1):
         if q["is_overridden"]:
-            q_table_style.append(("BACKGROUND", (0, r_idx), (-1, r_idx), colors.HexColor("#fef3c7")))
+            q_style.append(("BACKGROUND", (0, r_idx), (-1, r_idx), AMBER_LIGHT))
 
-    q_table.setStyle(TableStyle(q_table_style))
-    elements.append(q_table)
+    q_tbl.setStyle(TableStyle(q_style))
+    elements.append(q_tbl)
+    elements.append(Spacer(1, 16))
+
+    # ════════════════════════════════════════════════════════════════════════
+    # 4. STRENGTHS / WEAK AREAS  (side-by-side coloured panels)
+    # ════════════════════════════════════════════════════════════════════════
+    half = (W - 10) / 2
+
+    def build_panel(title, items, bg, border, title_color, bullet_color):
+        rows = [[Paragraph(title, ps("PH", fontSize=9, fontName="Helvetica-Bold",
+                                      textColor=title_color))]]
+        for item in items:
+            rows.append([Paragraph(f"• {item}",
+                                   ps("PI", fontSize=8, leading=11, textColor=CHARCOAL))])
+        tbl = Table(rows, colWidths=[half])
+        tbl.setStyle(TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, 0),  bg),
+            ("BACKGROUND",    (0, 1), (-1, -1), colors.HexColor("#ffffff")),
+            ("BOX",           (0, 0), (-1, -1), 1.2, border),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 10),
+            ("RIGHTPADDING",  (0, 0), (-1, -1), 10),
+            ("TOPPADDING",    (0, 0), (-1, 0),  7),
+            ("BOTTOMPADDING", (0, 0), (-1, 0),  7),
+            ("TOPPADDING",    (0, 1), (-1, -1), 4),
+            ("BOTTOMPADDING", (0, 1), (-1, -1), 4),
+        ]))
+        return tbl
+
+    has_strengths = bool(data["strengths"])
+    has_weaknesses = bool(data["weak_areas"])
+
+    if has_strengths or has_weaknesses:
+        sec_hdr2 = Table([[Paragraph("💡  Performance Analysis", h2w_st)]], colWidths=[W])
+        sec_hdr2.setStyle(TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, -1), EMERALD),
+            ("TOPPADDING",    (0, 0), (-1, -1), 7),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 14),
+            ("RIGHTPADDING",  (0, 0), (-1, -1), 14),
+        ]))
+        elements.append(sec_hdr2)
+
+        s_panel = build_panel(
+            "✅  Key Strengths & Mastery",
+            data["strengths"] or ["–"],
+            EMERALD_LIGHT, colors.HexColor("#6ee7b7"), EMERALD, EMERALD,
+        )
+        w_panel = build_panel(
+            "⚠️  Areas for Improvement",
+            data["weak_areas"] or ["–"],
+            ROSE_LIGHT, colors.HexColor("#fca5a5"), ROSE, ROSE,
+        )
+        panels_row = [[s_panel, Spacer(10, 1), w_panel]]
+        panels_tbl = Table(panels_row, colWidths=[half, 10, half])
+        panels_tbl.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("TOPPADDING",    (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING",  (0, 0), (-1, -1), 0),
+        ]))
+        elements.append(panels_tbl)
+        elements.append(Spacer(1, 14))
+
+    # ════════════════════════════════════════════════════════════════════════
+    # 5. OVERALL REMARK  (amber accent panel)
+    # ════════════════════════════════════════════════════════════════════════
+    sec_hdr3 = Table([[Paragraph("✨  Teacher & AI Overall Remark", h2w_st)]], colWidths=[W])
+    sec_hdr3.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), AMBER),
+        ("TOPPADDING",    (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 14),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 14),
+    ]))
+    elements.append(sec_hdr3)
+
+    remark_tbl = Table(
+        [[Paragraph(data["overall_remark"],
+                    ps("RK", fontSize=9, leading=14, textColor=CHARCOAL))]],
+        colWidths=[W]
+    )
+    remark_tbl.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), AMBER_LIGHT),
+        ("BOX",           (0, 0), (-1, -1), 1, AMBER_MED),
+        ("TOPPADDING",    (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 14),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 14),
+    ]))
+    elements.append(remark_tbl)
     elements.append(Spacer(1, 14))
 
-    # Overall Remark & Feedback Section
-    elements.append(Paragraph("Overall Performance Remark", heading2_style))
-    elements.append(Paragraph(data["overall_remark"], normal_style))
-    elements.append(Spacer(1, 10))
-
-    if data["strengths"]:
-        elements.append(Paragraph("<b>Key Strengths:</b>", bold_style))
-        for st in data["strengths"]:
-            elements.append(Paragraph(f"• {st}", normal_style))
-        elements.append(Spacer(1, 6))
-
-    if data["weak_areas"]:
-        elements.append(Paragraph("<b>Areas for Improvement:</b>", bold_style))
-        for wa in data["weak_areas"]:
-            elements.append(Paragraph(f"• {wa}", normal_style))
-        elements.append(Spacer(1, 6))
-
+    # ════════════════════════════════════════════════════════════════════════
+    # 6. STUDY RECOMMENDATIONS  (indigo panel)
+    # ════════════════════════════════════════════════════════════════════════
     if data["improvement_suggestions"]:
-        elements.append(Paragraph("<b>Actionable Study Recommendations:</b>", bold_style))
-        for sugg in data["improvement_suggestions"]:
-            elements.append(Paragraph(f"• {sugg}", normal_style))
-        elements.append(Spacer(1, 6))
+        sec_hdr4 = Table([[Paragraph("📚  Actionable Study Recommendations", h2w_st)]], colWidths=[W])
+        sec_hdr4.setStyle(TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, -1), INDIGO),
+            ("TOPPADDING",    (0, 0), (-1, -1), 7),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 14),
+            ("RIGHTPADDING",  (0, 0), (-1, -1), 14),
+        ]))
+        elements.append(sec_hdr4)
 
-    elements.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#DDD0C8"), spaceBefore=16, spaceAfter=8))
-    elements.append(Paragraph("Generated by AI Examiner – Automated Evaluation with Teacher Review", subtitle_style))
+        sugg_rows = []
+        for s in data["improvement_suggestions"]:
+            sugg_rows.append([Paragraph(f"→  {s}",
+                                        ps("SG", fontSize=8.5, leading=12, textColor=CHARCOAL))])
+        sugg_tbl = Table(sugg_rows, colWidths=[W])
+        sugg_tbl.setStyle(TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, -1), INDIGO_LIGHT),
+            ("BOX",           (0, 0), (-1, -1), 1, colors.HexColor("#a5b4fc")),
+            ("ROWBACKGROUNDS",(0, 0), (-1, -1), [INDIGO_LIGHT, WHITE]),
+            ("TOPPADDING",    (0, 0), (-1, -1), 5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 14),
+            ("RIGHTPADDING",  (0, 0), (-1, -1), 14),
+        ]))
+        elements.append(sugg_tbl)
+        elements.append(Spacer(1, 14))
+
+    # ════════════════════════════════════════════════════════════════════════
+    # 7. FOOTER
+    # ════════════════════════════════════════════════════════════════════════
+    footer_data = [[
+        Paragraph("Generated by  <b>AI Examiner</b>  –  Automated Evaluation with Teacher Review",
+                  ps("FT", fontSize=7.5, textColor=WHITE)),
+        Paragraph("Verified &amp; Approved by Teacher",
+                  ps("FT2", fontSize=7.5, textColor=BEIGE, alignment=2)),
+    ]]
+    footer_tbl = Table(footer_data, colWidths=[W * 0.6, W * 0.4])
+    footer_tbl.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, -1), CHARCOAL),
+        ("TOPPADDING",    (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 16),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 16),
+        ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    elements.append(footer_tbl)
 
     doc.build(elements)
     buffer.seek(0)
